@@ -1,0 +1,271 @@
+/**
+ * smart-card-api.ts
+ *
+ * Fetches live card and offer data from the Smart Card Offers backend
+ * and adapts the responses to PointsNorth's existing CreditCard / CardOffer types.
+ *
+ * API base: https://smart-card-offers.vercel.app
+ */
+
+import type { CreditCard, CardOffer, CardCategory, CardNetwork, RewardsType, EarnRate } from '@/types'
+
+const API = process.env.NEXT_PUBLIC_SMART_CARD_API ?? 'https://smart-card-offers.vercel.app'
+
+// ─── Raw API types ────────────────────────────────────────────────────────────
+
+interface ApiOffer {
+  id: string
+  card_id?: string
+  offer_type: string
+  headline: string
+  details?: string
+  points_value: number | null
+  cashback_value: number | null
+  spend_requirement: number | null
+  spend_timeframe_days: number | null
+  extra_perks?: string[]
+  is_limited_time: boolean
+  expires_at: string | null
+  is_verified: boolean
+  source_priority: number
+  confidence_score: number
+  source_url?: string
+  last_seen_at?: string
+  card?: {
+    name: string
+    slug: string
+    image_url: string | null
+    issuer: { slug: string; name: string }
+  }
+}
+
+interface ApiCard {
+  id: string
+  name: string
+  slug: string
+  card_type: string
+  tier: string
+  annual_fee: number
+  annual_fee_waived_first_year: boolean
+  rewards_program: string | null
+  rewards_type: 'points' | 'cashback' | 'hybrid'
+  earn_rate_base: number | null
+  earn_rate_multipliers: Record<string, number> | null
+  transfer_partners?: string[]
+  lounge_access: boolean
+  travel_insurance: boolean
+  purchase_protection: boolean
+  foreign_transaction_fee: number | null
+  credit_score_min?: string
+  apply_url: string | null
+  referral_url: string | null
+  image_url: string | null
+  short_description: string | null
+  pros?: string[]
+  cons?: string[]
+  best_for?: string[]
+  min_income?: number
+  is_featured: boolean
+  tags: string[]
+  issuer: { id: string; name: string; slug: string; website?: string }
+  current_offer?: ApiOffer[]
+  offers?: ApiOffer[]
+}
+
+// ─── Adapters ─────────────────────────────────────────────────────────────────
+
+function toNetwork(cardType: string, issuerSlug: string): CardNetwork {
+  if (issuerSlug === 'amex') return 'Amex'
+  const t = cardType?.toLowerCase()
+  if (t === 'mastercard') return 'Mastercard'
+  if (t === 'amex')       return 'Amex'
+  if (t === 'discover')   return 'Discover'
+  return 'Visa'
+}
+
+function toRewardsType(type: string): RewardsType {
+  if (type === 'cashback') return 'cash-back'
+  if (type === 'hybrid')   return 'cash-back'
+  return 'flexible-points'
+}
+
+function toCategories(card: ApiCard): CardCategory[] {
+  const cats: CardCategory[] = []
+  if (card.annual_fee === 0) cats.push('no-fee')
+  if (card.tier === 'premium' || card.tier === 'super-premium') cats.push('premium')
+  if (card.rewards_type === 'cashback') cats.push('cash-back')
+  if (card.tags?.includes('travel') || card.tags?.includes('aeroplan') || card.tags?.includes('westjet')) cats.push('travel')
+  if (card.tags?.includes('business')) cats.push('business')
+  if (card.tags?.includes('student')) cats.push('student')
+  if (card.rewards_type === 'points' && !cats.includes('travel')) cats.push('points')
+  if (cats.length === 0) cats.push('points')
+  return cats
+}
+
+const MULTIPLIER_LABEL: Record<string, string> = {
+  groceries:        'Groceries',
+  dining:           'Dining & restaurants',
+  gas:              'Gas & fuel',
+  travel:           'Travel',
+  transit:          'Transit & commuting',
+  streaming:        'Streaming services',
+  drugstore:        'Drugstore & pharmacy',
+  foreign_currency: 'Foreign currency',
+  other:            'Everything else',
+}
+
+function toEarnRates(card: ApiCard): EarnRate[] {
+  const rates: EarnRate[] = []
+  const unit = card.rewards_type === 'cashback' ? 'percent' : 'points'
+
+  if (card.earn_rate_multipliers) {
+    for (const [key, rate] of Object.entries(card.earn_rate_multipliers)) {
+      rates.push({ category: MULTIPLIER_LABEL[key] ?? key, rate, unit })
+    }
+  }
+
+  if (card.earn_rate_base) {
+    rates.push({ category: 'Everything else', rate: card.earn_rate_base, unit })
+  }
+
+  if (rates.length === 0) {
+    rates.push({ category: 'All purchases', rate: 1, unit })
+  }
+
+  return rates
+}
+
+export function adaptCard(api: ApiCard): CreditCard {
+  const offer = (api.current_offer ?? api.offers)?.[0]
+  const welcomeBonus = offer?.headline ?? undefined
+  const bonusSummary = offer
+    ? offer.points_value
+      ? `Earn ${offer.points_value.toLocaleString()} ${api.rewards_program ?? 'points'}`
+      : offer.cashback_value
+        ? `${offer.cashback_value}% cash back welcome offer`
+        : offer.headline
+    : undefined
+
+  return {
+    id:                        api.slug,
+    slug:                      api.slug,
+    name:                      api.name,
+    issuer:                    api.issuer.name,
+    network:                   toNetwork(api.card_type, api.issuer.slug),
+    annualFee:                 api.annual_fee ?? 0,
+    annualFeeWaived:           api.annual_fee_waived_first_year ? 'First year waived' : undefined,
+    rewardsType:               toRewardsType(api.rewards_type),
+    pointsProgram:             api.rewards_program ?? undefined,
+    earnRates:                 toEarnRates(api),
+    welcomeBonus,
+    bonusSummary,
+    perks:                     [],
+    insurance:                 { travelMedical: api.travel_insurance, purchaseProtection: api.purchase_protection },
+    foreignTransactionFee:     api.foreign_transaction_fee !== null && api.foreign_transaction_fee > 0,
+    loungeAccess:              api.lounge_access ? 'Included' : undefined,
+    bestFor:                   api.best_for ?? [],
+    pros:                      api.pros ?? [],
+    cons:                      api.cons ?? [],
+    affiliateLink:             api.referral_url ?? api.apply_url ?? '#',
+    applyUrl:                  api.apply_url ?? '#',
+    imageUrl:                  api.image_url ?? undefined,
+    featured:                  api.is_featured,
+    editorsPick:               api.is_featured && (api.tags?.includes('editors-pick') ?? false),
+    tags:                      api.tags ?? [],
+    categories:                toCategories(api),
+    lastUpdated:               new Date().toISOString().split('T')[0],
+  }
+}
+
+export function adaptOffer(api: ApiOffer): CardOffer {
+  const card = api.card
+  return {
+    id:                api.id,
+    cardId:            card?.slug ?? api.card_id ?? '',
+    cardSlug:          card?.slug ?? '',
+    cardName:          card?.name ?? 'Unknown Card',
+    issuer:            card?.issuer?.name ?? '',
+    offerType:         api.is_limited_time ? 'limited-time' : 'welcome-bonus',
+    headline:          api.headline,
+    bonusAmount:       api.points_value ?? api.cashback_value ?? undefined,
+    bonusUnit:         api.points_value ? 'points' : api.cashback_value ? 'percent' : undefined,
+    spendRequirement:  api.spend_requirement
+      ? `$${api.spend_requirement.toLocaleString()}${api.spend_timeframe_days ? ` in ${Math.round(api.spend_timeframe_days / 30)} months` : ''}`
+      : undefined,
+    spendAmount:       api.spend_requirement ?? undefined,
+    spendPeriodMonths: api.spend_timeframe_days ? Math.round(api.spend_timeframe_days / 30) : undefined,
+    offerExpiry:       api.expires_at ?? undefined,
+    isLimitedTime:     api.is_limited_time,
+    affiliateLink:     api.source_url ?? '#',
+    featured:          api.confidence_score >= 70,
+    lastUpdated:       api.last_seen_at ?? new Date().toISOString(),
+    tags:              [],
+  }
+}
+
+// ─── Fetch helpers ────────────────────────────────────────────────────────────
+
+export async function fetchCards(params?: {
+  issuer?: string
+  tier?: string
+  rewards_type?: string
+  featured?: boolean
+  limit?: number
+}): Promise<CreditCard[]> {
+  try {
+    const qs = new URLSearchParams()
+    if (params?.issuer)       qs.set('issuer', params.issuer)
+    if (params?.tier)         qs.set('tier', params.tier)
+    if (params?.rewards_type) qs.set('rewards_type', params.rewards_type)
+    if (params?.featured)     qs.set('featured', 'true')
+    if (params?.limit)        qs.set('limit', String(params.limit))
+
+    const res = await fetch(`${API}/api/cards?${qs}`, { next: { revalidate: 3600 } })
+    if (!res.ok) return []
+    const { cards } = await res.json()
+    return (cards as ApiCard[]).map(adaptCard)
+  } catch {
+    return []
+  }
+}
+
+export async function fetchCard(slug: string): Promise<CreditCard | null> {
+  try {
+    const res = await fetch(`${API}/api/cards/${slug}`, { next: { revalidate: 3600 } })
+    if (!res.ok) return null
+    const { card } = await res.json()
+    return adaptCard(card as ApiCard)
+  } catch {
+    return null
+  }
+}
+
+export async function fetchOffers(params?: {
+  limited?: boolean
+  limit?: number
+}): Promise<CardOffer[]> {
+  try {
+    const qs = new URLSearchParams()
+    if (params?.limited) qs.set('limited', 'true')
+    qs.set('limit', String(params?.limit ?? 50))
+
+    const res = await fetch(`${API}/api/offers?${qs}`, { next: { revalidate: 3600 } })
+    if (!res.ok) return []
+    const { offers } = await res.json()
+    return (offers as ApiOffer[]).map(adaptOffer)
+  } catch {
+    return []
+  }
+}
+
+export async function trackClick(cardId: string, offerId?: string, sourcePage?: string) {
+  try {
+    await fetch(`${API}/api/track-click`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ card_id: cardId, offer_id: offerId, source_page: sourcePage }),
+    })
+  } catch {
+    // non-critical — don't throw
+  }
+}
