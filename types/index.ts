@@ -80,6 +80,20 @@ export interface CreditCard {
   tags: string[]
   categories: CardCategory[]
   lastUpdated: string                  // ISO date string
+  transferPartners?: string[]          // e.g. ["Aeroplan", "British Airways"]
+  creditScoreMin?: string              // e.g. "good", "excellent"
+  allOffers?: Array<{                  // all current offers from detail endpoint
+    id: string
+    headline: string
+    pointsValue?: number
+    cashbackValue?: number
+    spendRequirement?: number
+    spendTimeframeDays?: number
+    isLimitedTime: boolean
+    expiresAt?: string
+    isVerified: boolean
+    confidenceScore: number
+  }>
 }
 
 // ─── Card Offers (separate from core card data) ───────────────────────────────

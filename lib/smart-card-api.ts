@@ -197,6 +197,20 @@ export function adaptCard(api: ApiCard): CreditCard {
     categories:                toCategories(api),
     lastUpdated:               new Date().toISOString().split('T')[0],
     incomeRequirementPersonal: api.min_income ?? undefined,
+    transferPartners:          api.transfer_partners ?? undefined,
+    creditScoreMin:            api.credit_score_min ?? undefined,
+    allOffers:                 api.current_offers?.map(o => ({
+      id:                o.id,
+      headline:          o.headline,
+      pointsValue:       o.points_value ?? undefined,
+      cashbackValue:     o.cashback_value ? parseFloat(o.cashback_value) : undefined,
+      spendRequirement:  o.spend_requirement ?? undefined,
+      spendTimeframeDays:o.spend_timeframe_days ?? undefined,
+      isLimitedTime:     o.is_limited_time,
+      expiresAt:         o.expires_at ?? undefined,
+      isVerified:        o.is_verified,
+      confidenceScore:   o.confidence_score,
+    })) ?? undefined,
   }
 }
 
