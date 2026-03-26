@@ -30,12 +30,12 @@ function OfferBadge({ offer }: { offer: CardOffer }) {
   return (
     <div className="card-surface overflow-hidden flex flex-col">
       {/* Card image header */}
-      <div className="h-36 bg-gradient-to-br from-navy-600 to-navy-900 relative flex items-center justify-center">
+      <div className="h-44 bg-gradient-to-br from-navy-600 to-navy-900 relative flex items-center justify-center">
         {offer.imageUrl ? (
           <img
             src={offer.imageUrl}
             alt={offer.cardName}
-            className="h-28 w-auto object-contain drop-shadow-lg"
+            className="h-32 w-auto object-contain drop-shadow-lg"
           />
         ) : (
           <span className="text-white font-bold text-lg opacity-40">{offer.issuer}</span>
@@ -81,7 +81,7 @@ export default async function HomePage() {
   const apiOffers = await fetchOffers({ limit: 20 })
 
   const featuredArticles = getFeaturedArticles()
-  const featuredOffers   = apiOffers.length > 0 ? apiOffers.slice(0, 5) : getFeaturedOffers().slice(0, 5)
+  const featuredOffers   = apiOffers.length > 0 ? apiOffers.slice(0, 8) : getFeaturedOffers().slice(0, 8)
   const featuredTools    = getFeaturedTools()
 
   return (
@@ -174,14 +174,20 @@ export default async function HomePage() {
             View all <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {/* Horizontal scroll row — single row, swipe on mobile */}
+        <div
+          className="flex gap-5 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: 'none' }}
+        >
           {featuredOffers.map(offer => (
-            <OfferBadge key={offer.id} offer={offer} />
+            <div key={offer.id} className="w-72 flex-shrink-0 snap-start">
+              <OfferBadge offer={offer} />
+            </div>
           ))}
         </div>
-        <div className="mt-4 sm:hidden">
-          <Link href="/best-offers" className="btn-secondary w-full text-center text-sm">
-            View all offers
+        <div className="mt-2 text-center">
+          <Link href="/best-offers" className="text-sm text-navy-600 font-medium hover:text-navy-800 transition-colors">
+            View all offers →
           </Link>
         </div>
       </section>

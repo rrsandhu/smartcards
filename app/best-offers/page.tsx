@@ -8,7 +8,6 @@ import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import Badge from '@/components/ui/Badge'
 import { fetchOffers } from '@/lib/smart-card-api'
 import { offers as localOffers } from '@/data/offers'
-import { cards, getCardBySlug } from '@/data/cards'
 import { formatDate } from '@/lib/utils'
 
 export const metadata: Metadata = {
@@ -23,8 +22,17 @@ export default async function BestOffersPage() {
   const apiOffers  = await fetchOffers({ limit: 50 })
   const allOffers  = apiOffers.length > 0 ? apiOffers : localOffers
 
-  const limitedTime = allOffers.filter(o => o.isLimitedTime)
-  const ongoing     = allOffers.filter(o => !o.isLimitedTime)
+  // Sort limited-time offers: ones with expiry first (soonest expiring), then no-expiry
+  const limitedTime = allOffers
+    .filter(o => o.isLimitedTime)
+    .sort((a, b) => {
+      if (a.offerExpiry && b.offerExpiry) return new Date(a.offerExpiry).getTime() - new Date(b.offerExpiry).getTime()
+      if (a.offerExpiry) return -1
+      if (b.offerExpiry) return 1
+      return 0
+    })
+    .slice(0, 3)
+  const ongoing = allOffers.filter(o => !o.isLimitedTime)
 
   return (
     <div className="container-site py-8">
@@ -40,7 +48,7 @@ export default async function BestOffersPage() {
 
       <DisclaimerBlock />
 
-      {/* Limited-time offers */}
+      {/* Limited-time offers — top 3, soonest expiring first */}
       {limitedTime.length > 0 && (
         <section className="mt-10">
           <div className="flex items-center gap-2 mb-5">
@@ -50,61 +58,65 @@ export default async function BestOffersPage() {
               Expires Soon
             </span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {limitedTime.map(offer => {
-              const card = cards.find(c => c.id === offer.cardId || c.slug === offer.cardSlug)
-              return (
-                <div key={offer.id} className="card-surface p-5 flex flex-col gap-4 ring-1 ring-red-100">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <Badge variant="red">
-                        <Zap className="w-2.5 h-2.5 mr-1" />Limited Time
-                      </Badge>
-                    </div>
-                    {offer.offerExpiry && (
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
-                        <Calendar className="w-3 h-3" />Expires {formatDate(offer.offerExpiry)}
-                      </span>
-                    )}
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {limitedTime.map(offer => (
+              <div key={offer.id} className="card-surface overflow-hidden flex flex-col ring-1 ring-red-100">
+                {/* Card image header */}
+                <div className="h-44 bg-gradient-to-br from-navy-700 to-navy-950 relative flex items-center justify-center">
+                  {offer.imageUrl ? (
+                    <img
+                      src={offer.imageUrl}
+                      alt={offer.cardName}
+                      className="h-32 w-auto object-contain drop-shadow-lg"
+                    />
+                  ) : (
+                    <span className="text-white font-bold text-lg opacity-40">{offer.issuer}</span>
+                  )}
+                  <Badge variant="red" className="absolute top-3 left-3">
+                    <Zap className="w-2.5 h-2.5 mr-1" />Limited Time
+                  </Badge>
+                  {offer.offerExpiry && (
+                    <span className="absolute bottom-3 right-3 flex items-center gap-1 text-xs font-medium text-white bg-black/40 backdrop-blur-sm px-2 py-1 rounded-full">
+                      <Calendar className="w-3 h-3" />Expires {formatDate(offer.offerExpiry)}
+                    </span>
+                  )}
+                </div>
+                {/* Content */}
+                <div className="p-5 flex flex-col gap-3 flex-1">
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-1">{offer.cardName}</h3>
+                    <h3 className="font-semibold text-gray-900 mb-0.5">{offer.cardName}</h3>
                     <p className="text-xs text-gray-500 mb-2">{offer.issuer}</p>
-                    <p className="text-sm text-gray-800">{offer.headline}</p>
+                    <p className="text-sm text-gray-800 leading-snug">{offer.headline}</p>
                     {offer.spendRequirement && (
                       <p className="text-xs text-gray-500 mt-1.5">
                         Spend requirement: {offer.spendRequirement}
                       </p>
                     )}
-                    {offer.additionalBonus && (
-                      <p className="text-xs text-navy-700 font-medium mt-1">
-                        + {offer.additionalBonus}
-                      </p>
-                    )}
                   </div>
                   <div className="flex gap-2 mt-auto">
-                    <a
-                      href={offer.affiliateLink ?? '#'}
-                      target="_blank"
-                      rel="noopener noreferrer nofollow"
-                      className="btn-primary flex-1 text-sm text-center flex items-center justify-center gap-1"
-                    >
-                      Apply Now <ExternalLink className="w-3 h-3" />
-                    </a>
-                    {card && (
-                      <Link href={`/credit-cards/${card.slug}`} className="btn-secondary text-sm px-3">
-                        Review
+                    {offer.affiliateLink ? (
+                      <a
+                        href={offer.affiliateLink}
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
+                        className="btn-primary flex-1 text-sm text-center flex items-center justify-center gap-1"
+                      >
+                        Apply Now <ExternalLink className="w-3 h-3" />
+                      </a>
+                    ) : (
+                      <Link href={`/credit-cards/${offer.cardSlug}`} className="btn-primary flex-1 text-sm text-center">
+                        View Card
                       </Link>
                     )}
-                    {!card && offer.cardSlug && (
+                    {offer.cardSlug && (
                       <Link href={`/credit-cards/${offer.cardSlug}`} className="btn-secondary text-sm px-3">
                         Review
                       </Link>
                     )}
                   </div>
                 </div>
-              )
-            })}
+              </div>
+            ))}
           </div>
         </section>
       )}
@@ -118,7 +130,6 @@ export default async function BestOffersPage() {
         </div>
         <div className="space-y-4">
           {ongoing.map((offer, idx) => {
-            const card = cards.find(c => c.id === offer.cardId || c.slug === offer.cardSlug)
             return (
               <div key={offer.id} className="card-surface p-5">
                 <div className="flex flex-col sm:flex-row items-start gap-4">
@@ -179,15 +190,11 @@ export default async function BestOffersPage() {
                         View Card
                       </Link>
                     )}
-                    {card ? (
-                      <Link href={`/credit-cards/${card.slug}`} className="btn-secondary text-sm text-center">
-                        Full Review
-                      </Link>
-                    ) : offer.cardSlug ? (
+                    {offer.cardSlug && (
                       <Link href={`/credit-cards/${offer.cardSlug}`} className="btn-secondary text-sm text-center">
                         Full Review
                       </Link>
-                    ) : null}
+                    )}
                   </div>
                 </div>
               </div>
