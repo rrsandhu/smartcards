@@ -101,6 +101,7 @@ export interface CardOffer {
   offerExpiry?: string                 // ISO date
   isLimitedTime: boolean
   affiliateLink?: string
+  imageUrl?: string
   featured: boolean
   lastUpdated: string
   tags: string[]

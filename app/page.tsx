@@ -33,9 +33,13 @@ function OfferBadge({ offer }: { offer: CardOffer }) {
   return (
     <div className="card-surface p-5 flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-semibold text-navy-700 bg-navy-100 px-2.5 py-1 rounded-full">
-          {offer.issuer}
-        </span>
+        {offer.imageUrl ? (
+          <img src={offer.imageUrl} alt={offer.cardName} className="h-10 w-16 object-contain rounded" />
+        ) : (
+          <span className="text-xs font-semibold text-navy-700 bg-navy-100 px-2.5 py-1 rounded-full">
+            {offer.issuer}
+          </span>
+        )}
         {offer.isLimitedTime && (
           <span className="text-xs font-semibold text-red-700 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1">
             <Zap className="w-2.5 h-2.5" />Limited
@@ -44,19 +48,26 @@ function OfferBadge({ offer }: { offer: CardOffer }) {
       </div>
       <div>
         <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-1">{offer.cardName}</h3>
+        <p className="text-xs text-gray-500 mb-1">{offer.issuer}</p>
         <p className="text-sm text-gray-700">{offer.headline}</p>
         {offer.spendRequirement && (
-          <p className="text-xs text-gray-500 mt-1">Requirement: {offer.spendRequirement}</p>
+          <p className="text-xs text-gray-500 mt-1">Spend: {offer.spendRequirement}</p>
         )}
       </div>
-      <a
-        href={offer.affiliateLink ?? '#'}
-        target="_blank"
-        rel="noopener noreferrer nofollow"
-        className="btn-primary text-sm text-center"
-      >
-        Apply Now
-      </a>
+      {offer.affiliateLink ? (
+        <a
+          href={offer.affiliateLink}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          className="btn-primary text-sm text-center mt-auto"
+        >
+          Apply Now
+        </a>
+      ) : (
+        <Link href={`/credit-cards/${offer.cardSlug}`} className="btn-secondary text-sm text-center mt-auto">
+          View Card
+        </Link>
+      )}
     </div>
   )
 }

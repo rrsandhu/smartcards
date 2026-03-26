@@ -225,6 +225,7 @@ export function adaptOffer(api: ApiOffer): CardOffer {
     offerExpiry,
     isLimitedTime:     api.is_limited_time,
     affiliateLink:     card?.referral_url ?? api.source_url ?? undefined,
+    imageUrl:          card?.image_url ?? undefined,
     featured:          api.confidence_score >= 70,
     lastUpdated:       api.last_seen_at ?? new Date().toISOString(),
     tags:              [],

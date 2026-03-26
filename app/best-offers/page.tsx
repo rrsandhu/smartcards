@@ -127,12 +127,16 @@ export default async function BestOffersPage() {
                     {idx + 1}
                   </div>
 
-                  {/* Card art */}
-                  <div className="w-16 h-10 rounded-lg bg-gradient-to-br from-navy-600 to-navy-900 flex-shrink-0 flex items-center justify-center">
-                    <span className="text-white font-bold text-xs opacity-80">
-                      {offer.issuer.split(' ')[0].toUpperCase()}
-                    </span>
-                  </div>
+                  {/* Card image */}
+                  {offer.imageUrl ? (
+                    <img src={offer.imageUrl} alt={offer.cardName} className="w-20 h-13 object-contain rounded-lg bg-gray-50 flex-shrink-0" />
+                  ) : (
+                    <div className="w-16 h-10 rounded-lg bg-gradient-to-br from-navy-600 to-navy-900 flex-shrink-0 flex items-center justify-center">
+                      <span className="text-white font-bold text-xs opacity-80">
+                        {offer.issuer.split(' ')[0].toUpperCase()}
+                      </span>
+                    </div>
+                  )}
 
                   {/* Details */}
                   <div className="flex-1 min-w-0">
@@ -161,14 +165,20 @@ export default async function BestOffersPage() {
 
                   {/* CTAs */}
                   <div className="flex flex-col gap-2 flex-shrink-0">
-                    <a
-                      href={offer.affiliateLink ?? '#'}
-                      target="_blank"
-                      rel="noopener noreferrer nofollow"
-                      className="btn-primary text-sm text-center whitespace-nowrap"
-                    >
-                      Apply Now
-                    </a>
+                    {offer.affiliateLink ? (
+                      <a
+                        href={offer.affiliateLink}
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
+                        className="btn-primary text-sm text-center whitespace-nowrap"
+                      >
+                        Apply Now
+                      </a>
+                    ) : (
+                      <Link href={`/credit-cards/${offer.cardSlug}`} className="btn-primary text-sm text-center whitespace-nowrap">
+                        View Card
+                      </Link>
+                    )}
                     {card ? (
                       <Link href={`/credit-cards/${card.slug}`} className="btn-secondary text-sm text-center">
                         Full Review

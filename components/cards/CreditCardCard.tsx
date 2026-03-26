@@ -9,25 +9,30 @@ interface Props {
   variant?: 'grid' | 'list' | 'featured'
 }
 
-// Simple card art placeholder with issuer initials
-function CardArt({ card }: { card: CreditCard }) {
-  const colors: Record<string, string> = {
-    'American Express': 'from-slate-700 to-slate-900',
-    'TD':               'from-green-700 to-green-900',
-    'Scotiabank':       'from-red-600 to-red-800',
-    'RBC':              'from-blue-600 to-blue-800',
-    'CIBC':             'from-red-700 to-slate-800',
-    'BMO':              'from-blue-700 to-blue-900',
-    'Tangerine':        'from-orange-500 to-orange-700',
-    'Rogers Bank':      'from-red-500 to-red-700',
-  }
-  const gradient = colors[card.issuer] ?? 'from-navy-600 to-navy-900'
+const ISSUER_GRADIENT: Record<string, string> = {
+  'American Express': 'from-slate-700 to-slate-900',
+  'TD':               'from-green-700 to-green-900',
+  'Scotiabank':       'from-red-600 to-red-800',
+  'RBC':              'from-blue-600 to-blue-800',
+  'CIBC':             'from-red-700 to-slate-800',
+  'BMO':              'from-blue-700 to-blue-900',
+  'Tangerine':        'from-orange-500 to-orange-700',
+  'Rogers Bank':      'from-red-500 to-red-700',
+}
 
+function CardImage({ card, className }: { card: CreditCard; className: string }) {
+  if (card.imageUrl) {
+    return (
+      <img
+        src={card.imageUrl}
+        alt={card.name}
+        className={cn(className, 'object-contain bg-gray-50 rounded-lg')}
+      />
+    )
+  }
+  const gradient = ISSUER_GRADIENT[card.issuer] ?? 'from-navy-600 to-navy-900'
   return (
-    <div className={cn(
-      'rounded-lg bg-gradient-to-br flex items-center justify-center',
-      gradient
-    )}>
+    <div className={cn(className, 'rounded-lg bg-gradient-to-br flex items-center justify-center', gradient)}>
       <span className="text-white font-bold text-xs tracking-wide opacity-80">
         {card.issuer.split(' ')[0].toUpperCase()}
       </span>
@@ -39,9 +44,9 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
   if (variant === 'list') {
     return (
       <div className="card-surface p-5 flex flex-col sm:flex-row items-start gap-5">
-        {/* Card art */}
-        <div className="w-20 h-12 flex-shrink-0">
-          <CardArt card={card} />
+        {/* Card image */}
+        <div className="w-24 h-15 flex-shrink-0">
+          <CardImage card={card} className="w-24 h-16" />
         </div>
 
         {/* Info */}
@@ -53,6 +58,7 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
               </Badge>
             )}
             {card.featured && !card.editorsPick && <Badge variant="navy">Featured</Badge>}
+            {!card.foreignTransactionFee && <Badge variant="green">No FX Fee</Badge>}
           </div>
           <h3 className="font-semibold text-gray-900 leading-snug mb-0.5">
             <Link href={`/credit-cards/${card.slug}`} className="hover:text-navy-600 transition-colors">
@@ -79,16 +85,22 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
 
         {/* CTAs */}
         <div className="flex flex-col gap-2 flex-shrink-0 w-full sm:w-auto">
-          <a
-            href={card.affiliateLink ?? '#'}
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            className="btn-primary text-sm text-center flex items-center gap-1.5"
-          >
-            Apply Now <ExternalLink className="w-3.5 h-3.5" />
-          </a>
+          {card.affiliateLink ? (
+            <a
+              href={card.affiliateLink}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className="btn-primary text-sm text-center flex items-center gap-1.5"
+            >
+              Apply Now <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          ) : (
+            <span className="btn-primary text-sm text-center opacity-50 cursor-not-allowed select-none">
+              Apply Now
+            </span>
+          )}
           <Link href={`/credit-cards/${card.slug}`} className="btn-secondary text-sm text-center">
-            Learn More
+            Full Review
           </Link>
         </div>
       </div>
@@ -101,9 +113,7 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
       {/* Header */}
       <div className="p-5 pb-4 border-b border-parchment-100">
         <div className="flex items-start justify-between gap-3 mb-4">
-          <div className="w-16 h-10">
-            <CardArt card={card} />
-          </div>
+          <CardImage card={card} className="w-20 h-13" />
           <div className="flex flex-wrap gap-1 justify-end">
             {card.editorsPick && (
               <Badge variant="gold">
@@ -165,14 +175,20 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
 
       {/* CTAs */}
       <div className="p-5 pt-4 border-t border-parchment-100 flex flex-col gap-2">
-        <a
-          href={card.affiliateLink ?? '#'}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className="btn-primary text-sm text-center"
-        >
-          Apply Now
-        </a>
+        {card.affiliateLink ? (
+          <a
+            href={card.affiliateLink}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="btn-primary text-sm text-center"
+          >
+            Apply Now
+          </a>
+        ) : (
+          <span className="btn-primary text-sm text-center opacity-50 cursor-not-allowed select-none">
+            Apply Now
+          </span>
+        )}
         <Link href={`/credit-cards/${card.slug}`} className="btn-secondary text-sm text-center">
           Full Review
         </Link>
