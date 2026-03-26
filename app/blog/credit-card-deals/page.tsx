@@ -8,7 +8,7 @@ import { getArticlesByCategory } from '@/data/articles'
 
 export const metadata: Metadata = {
   title: 'Credit Card Deals — Best Canadian Welcome Bonuses & Promotions',
-  description: 'Browse the best Canadian credit card deals, welcome bonuses, and limited-time offers. Updated regularly by the PointsNorth editorial team.',
+  description: 'Browse the best Canadian credit card deals, welcome bonuses, and limited-time offers. Updated regularly by the SmartCardOffers editorial team.',
 }
 
 export default function CreditCardDealsPage() {

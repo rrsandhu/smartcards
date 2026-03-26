@@ -8,8 +8,8 @@ import { articles } from '@/data/articles'
 import { categoryLabel } from '@/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'Blog — Points Deals, Credit Card News & Guides | PointsNorth',
-  description: 'Expert Canadian personal finance content. Points deals, credit card offers, mortgage news, and guides from the PointsNorth editorial team.',
+  title: 'Blog — Points Deals, Credit Card News & Guides | SmartCardOffers',
+  description: 'Expert Canadian personal finance content. Points deals, credit card offers, mortgage news, and guides from the SmartCardOffers editorial team.',
 }
 
 const categoryLinks = [
@@ -29,7 +29,7 @@ export default function BlogPage() {
 
       <div className="mt-6 mb-8">
         <SectionHeader
-          label="PointsNorth Blog"
+          label="SmartCardOffers Blog"
           title="Canadian Finance News & Analysis"
           subtitle="Points deals, credit card guides, mortgage updates, and personal finance strategy — written for Canadians."
         />

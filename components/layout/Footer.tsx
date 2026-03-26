@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MapPin, Mail, ArrowUpRight } from 'lucide-react'
+import { MapPin, Mail } from 'lucide-react'
 
 const footerLinks = {
   'Credit Cards': [
@@ -53,10 +53,10 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-4 lg:col-span-1 lg:pr-4">
             <Link href="/" className="flex items-center gap-2.5 mb-5 group">
               <span className="w-8 h-8 rounded-xl bg-teal-500 flex items-center justify-center text-white font-bold text-sm group-hover:bg-teal-400 transition-colors">
-                P
+                S
               </span>
               <span className="font-bold text-[1.1rem] tracking-tight">
-                <span className="text-white">Points</span><span className="text-teal-400">North</span>
+                <span className="text-white">SmartCard</span><span className="text-teal-400">Offers</span>
               </span>
             </Link>
             <p className="text-sm leading-relaxed text-slate-400 mb-5">
@@ -69,8 +69,8 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2 text-sm text-slate-500">
                 <Mail className="w-3.5 h-3.5 text-slate-600 flex-shrink-0" />
-                <a href="mailto:hello@pointsnorth.ca" className="hover:text-teal-400 transition-colors">
-                  hello@pointsnorth.ca
+                <a href="mailto:hello@smartcardoffers.ca" className="hover:text-teal-400 transition-colors">
+                  hello@smartcardoffers.ca
                 </a>
               </div>
             </div>
@@ -104,11 +104,11 @@ export default function Footer() {
         <div className="container-site py-7">
           <p className="text-xs text-slate-600 leading-relaxed mb-3">
             <strong className="text-slate-500 font-semibold">Affiliate Disclosure:</strong>{' '}
-            PointsNorth may earn a commission when you apply for products through our links. This does not affect our editorial independence or the way we review and rank financial products. We are committed to providing accurate, unbiased information to help Canadians make informed financial decisions.
+            SmartCardOffers may earn a commission when you apply for products through our links. This does not affect our editorial independence or the way we review and rank financial products. We are committed to providing accurate, unbiased information to help Canadians make informed financial decisions.
           </p>
           <p className="text-xs text-slate-600 leading-relaxed">
             <strong className="text-slate-500 font-semibold">Editorial Note:</strong>{' '}
-            Rates, fees, and offer details are accurate as of the dates shown and are subject to change. Always verify current terms directly with the card issuer before applying. PointsNorth is not a financial advisor; this content is for informational purposes only.
+            Rates, fees, and offer details are accurate as of the dates shown and are subject to change. Always verify current terms directly with the card issuer before applying. SmartCardOffers is not a financial advisor; this content is for informational purposes only.
           </p>
         </div>
       </div>
@@ -117,7 +117,7 @@ export default function Footer() {
       <div className="border-t border-white/[0.06]">
         <div className="container-site py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="text-xs text-slate-600">
-            © {new Date().getFullYear()} PointsNorth. All rights reserved.
+            © {new Date().getFullYear()} SmartCardOffers. All rights reserved.
           </span>
           <div className="flex items-center gap-5 text-xs text-slate-600">
             <Link href="/legal/privacy-policy" className="hover:text-slate-300 transition-colors">Privacy</Link>

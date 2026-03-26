@@ -10,7 +10,7 @@ import { getToolsByCategory } from '@/data/tools'
 
 export const metadata: Metadata = {
   title: 'Mortgage News Canada — Rate Updates, Renewal Tips & Housing Market',
-  description: 'Stay current on Canadian mortgage rates, Bank of Canada rate decisions, housing market news, and expert mortgage advice from PointsNorth.',
+  description: 'Stay current on Canadian mortgage rates, Bank of Canada rate decisions, housing market news, and expert mortgage advice from SmartCardOffers.',
 }
 
 export default function MortgageNewsPage() {

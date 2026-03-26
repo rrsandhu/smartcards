@@ -12,7 +12,7 @@ interface Props {
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   return {
     title: searchParams.q ? `Search results for "${searchParams.q}"` : 'Search',
-    description: 'Search PointsNorth for credit cards, articles, and financial tools.',
+    description: 'Search SmartCardOffers for credit cards, articles, and financial tools.',
   }
 }
 
@@ -49,7 +49,7 @@ export default function SearchPage({ searchParams }: Props) {
 
       <div className="mt-6 mb-8 max-w-2xl">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          {query ? `Search results for "${query}"` : 'Search PointsNorth'}
+          {query ? `Search results for "${query}"` : 'Search SmartCardOffers'}
         </h1>
 
         {/* Search form */}

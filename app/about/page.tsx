@@ -4,8 +4,8 @@ import { Shield, Users, TrendingUp, Heart } from 'lucide-react'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 
 export const metadata: Metadata = {
-  title: 'About PointsNorth — Canadian Personal Finance Editorial Team',
-  description: 'PointsNorth is a trusted Canadian personal finance website covering credit cards, points programs, and mortgage news for Canadians.',
+  title: 'About SmartCardOffers — Canadian Personal Finance Editorial Team',
+  description: 'SmartCardOffers is a trusted Canadian personal finance website covering credit cards, points programs, and mortgage news for Canadians.',
 }
 
 const values = [
@@ -37,12 +37,12 @@ export default function AboutPage() {
       <Breadcrumbs crumbs={[{ label: 'About Us' }]} />
 
       <div className="mt-8">
-        <p className="section-label mb-3">About PointsNorth</p>
+        <p className="section-label mb-3">About SmartCardOffers</p>
         <h1 className="text-4xl font-bold text-gray-900 mb-5">
           We help Canadians make smarter financial decisions
         </h1>
         <p className="text-xl text-gray-600 leading-relaxed mb-10">
-          PointsNorth is a Canadian personal finance website focused on credit cards, travel rewards, and mortgage guidance. We're a small editorial team with deep expertise in Canadian loyalty programs, card products, and the mortgage market.
+          SmartCardOffers is a Canadian personal finance website focused on credit cards, travel rewards, and mortgage guidance. We're a small editorial team with deep expertise in Canadian loyalty programs, card products, and the mortgage market.
         </p>
 
         {/* Values */}
@@ -62,13 +62,13 @@ export default function AboutPage() {
         <div className="bg-parchment-50 rounded-2xl p-8 mb-10">
           <h2 className="text-xl font-bold text-gray-900 mb-4">How We Make Money</h2>
           <p className="text-gray-600 leading-relaxed mb-4">
-            PointsNorth earns revenue through affiliate referral commissions. When you click an "Apply Now" link and are approved for a credit card, we may receive a commission from the card issuer. This is how we keep the site free for readers.
+            SmartCardOffers earns revenue through affiliate referral commissions. When you click an "Apply Now" link and are approved for a credit card, we may receive a commission from the card issuer. This is how we keep the site free for readers.
           </p>
           <p className="text-gray-600 leading-relaxed mb-4">
             Importantly, our editorial reviews, rankings, and recommendations are not influenced by these commercial relationships. We maintain a strict separation between our business operations and editorial content.
           </p>
           <p className="text-gray-600 leading-relaxed">
-            We include cards in our comparisons regardless of whether we have an affiliate relationship. Not every card on PointsNorth pays us a commission — we include them because they're relevant and useful to Canadians.
+            We include cards in our comparisons regardless of whether we have an affiliate relationship. Not every card on SmartCardOffers pays us a commission — we include them because they're relevant and useful to Canadians.
           </p>
           <div className="mt-4">
             <Link href="/legal/affiliate-disclosure" className="text-navy-600 text-sm font-medium hover:text-navy-800 transition-colors">

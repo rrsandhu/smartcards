@@ -82,10 +82,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0 group">
             <span className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-sm group-hover:bg-blue-700 transition-colors">
-              P
+              S
             </span>
             <span className="font-bold text-[1.2rem] tracking-tight">
-              <span className="text-slate-900">Points</span><span className="text-teal-500">North</span>
+              <span className="text-slate-900">SmartCard</span><span className="text-teal-500">Offers</span>
             </span>
           </Link>
 

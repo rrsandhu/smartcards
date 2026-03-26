@@ -7,8 +7,8 @@ import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import { getArticlesByCategory } from '@/data/articles'
 
 export const metadata: Metadata = {
-  title: 'Guides — Canadian Points, Credit Cards & Personal Finance | PointsNorth',
-  description: 'In-depth guides to Canadian credit card points, Aeroplan strategy, travel rewards, and personal finance decisions — written by the PointsNorth editorial team.',
+  title: 'Guides — Canadian Points, Credit Cards & Personal Finance | SmartCardOffers',
+  description: 'In-depth guides to Canadian credit card points, Aeroplan strategy, travel rewards, and personal finance decisions — written by the SmartCardOffers editorial team.',
 }
 
 export default function GuidesPage() {

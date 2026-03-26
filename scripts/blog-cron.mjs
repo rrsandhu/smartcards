@@ -68,7 +68,7 @@ function publishNext() {
 }
 
 function run() {
-  console.log('🚀  PointsNorth blog cron started (queue mode — no API key needed)')
+  console.log('🚀  SmartCardOffers blog cron started (queue mode — no API key needed)')
   console.log(`    Publishing a post now, then every ${fmt(INTERVAL_MS)}`)
   console.log('    Press Ctrl+C to stop.\n')
 

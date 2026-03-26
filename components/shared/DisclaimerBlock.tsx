@@ -11,7 +11,7 @@ export default function DisclaimerBlock({ text }: Props) {
       <p>
         {text ?? (
           <>
-            <strong>Advertiser Disclosure:</strong> PointsNorth may earn a referral fee when you apply for products through links on this page. This does not affect the way we evaluate or rank products. Rates, fees, and offer details are subject to change — always verify with the card issuer before applying.{' '}
+            <strong>Advertiser Disclosure:</strong> SmartCardOffers may earn a referral fee when you apply for products through links on this page. This does not affect the way we evaluate or rank products. Rates, fees, and offer details are subject to change — always verify with the card issuer before applying.{' '}
             <a href="/legal/affiliate-disclosure" className="underline hover:text-navy-600">
               Learn more about how we make money.
             </a>

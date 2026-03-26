@@ -84,7 +84,7 @@ const IMAGES = {
 
 // ─── System prompt ─────────────────────────────────────────────────────────────
 
-const SYSTEM_PROMPT = `You are an expert Canadian personal finance and travel rewards blogger for PointsNorth.ca. You write authoritative, practical content about maximizing Canadian credit card points — specifically Aeroplan, Amex Membership Rewards, RBC Avion, and Scene+.
+const SYSTEM_PROMPT = `You are an expert Canadian personal finance and travel rewards blogger for SmartCardOffers.ca. You write authoritative, practical content about maximizing Canadian credit card points — specifically Aeroplan, Amex Membership Rewards, RBC Avion, and Scene+.
 
 Your audience: Canadians who want to fly business/first class using points, maximize their credit card rewards, and make smart financial decisions.
 
@@ -215,7 +215,7 @@ export async function generatePost() {
     title:              generated.title,
     excerpt:            generated.excerpt ?? generated.intro?.slice(0, 180) + '…',
     category:           topic.category,
-    author:             { name: 'PointsNorth Editorial', title: 'Staff Writer' },
+    author:             { name: 'SmartCardOffers Editorial', title: 'Staff Writer' },
     publishDate:        now,
     heroImageUrl:       image.url,
     heroImageAlt:       image.alt,

@@ -31,8 +31,8 @@ export default function ContactPage() {
               <Mail className="w-5 h-5 text-navy-600" />
               <h3 className="font-semibold text-gray-900 text-sm">Email Us</h3>
             </div>
-            <a href="mailto:hello@pointsnorth.ca" className="text-sm text-navy-600 hover:text-navy-800 transition-colors">
-              hello@pointsnorth.ca
+            <a href="mailto:hello@smartcardoffers.ca" className="text-sm text-navy-600 hover:text-navy-800 transition-colors">
+              hello@smartcardoffers.ca
             </a>
             <p className="text-xs text-gray-500 mt-1">We aim to respond within 1–2 business days.</p>
           </div>

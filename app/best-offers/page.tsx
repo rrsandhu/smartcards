@@ -192,7 +192,7 @@ export default async function BestOffersPage() {
         <div className="text-gray-600 text-sm space-y-3 leading-relaxed">
           <p>We evaluate every welcome bonus based on its total net value after factoring in the annual fee, required minimum spend, and realistic points redemption values. A 100,000-point bonus that requires $10,000 in spending isn't always better than a 35,000-point bonus with a $1,000 threshold.</p>
           <p>We monitor offer changes from Canadian card issuers and update this page regularly. Limited-time offers are flagged clearly so you can act before they expire.</p>
-          <p>PointsNorth may earn a referral commission when you apply through our links. This does not affect our rankings — we include every major Canadian card regardless of whether we have an affiliate relationship.</p>
+          <p>SmartCardOffers may earn a referral commission when you apply through our links. This does not affect our rankings — we include every major Canadian card regardless of whether we have an affiliate relationship.</p>
         </div>
       </section>
 

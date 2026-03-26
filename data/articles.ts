@@ -276,7 +276,7 @@ const staticArticles: Article[] = [
       },
       {
         type: 'paragraph',
-        body: 'Periodically — usually 2–4 times per year — American Express runs transfer bonuses to select partners. A 20% bonus to Aeroplan means 60,000 Amex MR becomes 72,000 Aeroplan miles instead of 60,000. These bonuses are not publicized far in advance; the best way to catch them is subscribing to PointsNorth\'s newsletter or following Canadian points blogs. The bonuses typically run for 2–4 weeks.',
+        body: 'Periodically — usually 2–4 times per year — American Express runs transfer bonuses to select partners. A 20% bonus to Aeroplan means 60,000 Amex MR becomes 72,000 Aeroplan miles instead of 60,000. These bonuses are not publicized far in advance; the best way to catch them is subscribing to SmartCardOffers\'s newsletter or following Canadian points blogs. The bonuses typically run for 2–4 weeks.',
       },
       {
         type: 'bullets',

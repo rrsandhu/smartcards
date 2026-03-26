@@ -2,7 +2,7 @@
  * smart-card-api.ts
  *
  * Fetches live card and offer data from the Smart Card Offers backend
- * and adapts the responses to PointsNorth's existing CreditCard / CardOffer types.
+ * and adapts the responses to SmartCardOffers's existing CreditCard / CardOffer types.
  *
  * API base: https://smart-card-offers.vercel.app
  */

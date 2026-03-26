@@ -332,7 +332,7 @@ export default async function CardDetailPage({ params }: Props) {
               <h2 className="text-lg font-bold text-gray-900 mb-3">Our Editorial Review</h2>
               <p className="text-gray-700 leading-relaxed text-[15px]">{card.editorialReview}</p>
               <p className="text-xs text-gray-400 mt-4">
-                Last updated: {formatDate(card.lastUpdated)} · PointsNorth Editorial Team
+                Last updated: {formatDate(card.lastUpdated)} · SmartCardOffers Editorial Team
               </p>
             </div>
           )}

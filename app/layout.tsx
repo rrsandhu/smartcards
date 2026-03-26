@@ -12,8 +12,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'PointsNorth — Canadian Credit Cards, Points Deals & Mortgage Tools',
-    template: '%s | PointsNorth',
+    default: 'SmartCardOffers — Canadian Credit Cards, Points Deals & Mortgage Tools',
+    template: '%s | SmartCardOffers',
   },
   description:
     'Compare the best Canadian credit cards, discover points deals, and use free mortgage calculators. Your trusted source for Canadian personal finance.',
@@ -26,21 +26,21 @@ export const metadata: Metadata = {
     'credit card rewards',
     'points deals Canada',
   ],
-  authors: [{ name: 'PointsNorth Editorial Team' }],
-  creator: 'PointsNorth',
-  metadataBase: new URL('https://pointsnorth.ca'),
+  authors: [{ name: 'SmartCardOffers Editorial Team' }],
+  creator: 'SmartCardOffers',
+  metadataBase: new URL('https://smartcardoffers.ca'),
   openGraph: {
     type: 'website',
     locale: 'en_CA',
-    url: 'https://pointsnorth.ca',
-    siteName: 'PointsNorth',
-    title: 'PointsNorth — Canadian Credit Cards, Points Deals & Mortgage Tools',
+    url: 'https://smartcardoffers.ca',
+    siteName: 'SmartCardOffers',
+    title: 'SmartCardOffers — Canadian Credit Cards, Points Deals & Mortgage Tools',
     description:
       'Compare the best Canadian credit cards, discover points deals, and use free mortgage calculators.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'PointsNorth — Canadian Credit Cards & Points',
+    title: 'SmartCardOffers — Canadian Credit Cards & Points',
     description: 'Your trusted source for Canadian personal finance, credit cards, and mortgage tools.',
   },
   robots: {

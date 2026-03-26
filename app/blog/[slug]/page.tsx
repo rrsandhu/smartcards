@@ -269,7 +269,7 @@ export default function ArticlePage({ params }: Props) {
 
       {/* More articles */}
       <section className="mt-14 border-t border-parchment-200 pt-10">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">More from PointsNorth</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-6">More from SmartCardOffers</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {articles.filter(a => a.id !== article.id).slice(0, 3).map(a => (
             <ArticleCard key={a.id} article={a} variant="featured" />

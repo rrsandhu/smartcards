@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — PointsNorth',
+  title: 'Privacy Policy — SmartCardOffers',
 }
 
 export default function PrivacyPolicyPage() {
@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
         <p className="text-sm text-gray-500 mb-8">Last updated: July 1, 2024</p>
         <div className="space-y-6 text-gray-700 text-[15px] leading-relaxed">
-          <p>PointsNorth ("we," "us," or "our") is committed to protecting your privacy. This policy describes what data we collect, how we use it, and your rights.</p>
+          <p>SmartCardOffers ("we," "us," or "our") is committed to protecting your privacy. This policy describes what data we collect, how we use it, and your rights.</p>
 
           <h2 className="text-xl font-bold text-gray-900 mt-8">Information We Collect</h2>
           <p>We may collect:</p>
@@ -38,13 +38,13 @@ export default function PrivacyPolicyPage() {
           </p>
 
           <h2 className="text-xl font-bold text-gray-900 mt-8">Your Rights (PIPEDA)</h2>
-          <p>Under Canada's PIPEDA, you have the right to access, correct, and request deletion of your personal data. To exercise these rights, contact us at <a href="mailto:hello@pointsnorth.ca" className="text-navy-600 underline">hello@pointsnorth.ca</a>.</p>
+          <p>Under Canada's PIPEDA, you have the right to access, correct, and request deletion of your personal data. To exercise these rights, contact us at <a href="mailto:hello@smartcardoffers.ca" className="text-navy-600 underline">hello@smartcardoffers.ca</a>.</p>
 
           <h2 className="text-xl font-bold text-gray-900 mt-8">Cookies</h2>
           <p>You can control cookies through your browser settings. Disabling cookies may affect some site functionality.</p>
 
           <h2 className="text-xl font-bold text-gray-900 mt-8">Contact</h2>
-          <p>Questions about this policy: <a href="mailto:hello@pointsnorth.ca" className="text-navy-600 underline">hello@pointsnorth.ca</a></p>
+          <p>Questions about this policy: <a href="mailto:hello@smartcardoffers.ca" className="text-navy-600 underline">hello@smartcardoffers.ca</a></p>
         </div>
       </div>
     </div>

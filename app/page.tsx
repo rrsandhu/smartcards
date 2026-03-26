@@ -16,7 +16,7 @@ import { formatCAD, categoryLabel } from '@/lib/utils'
 import type { CardOffer } from '@/types'
 
 export const metadata: Metadata = {
-  title: 'PointsNorth — Canada\'s Best Credit Cards, Points Deals & Mortgage Tools',
+  title: 'SmartCardOffers — Canada\'s Best Credit Cards, Points Deals & Mortgage Tools',
   description: 'Compare Canada\'s best credit cards, discover points deals, and use free mortgage calculators. Expert reviews and unbiased comparisons for Canadians.',
 }
 
