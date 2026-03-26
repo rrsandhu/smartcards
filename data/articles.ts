@@ -32,8 +32,8 @@ const staticArticles: Article[] = [
       'How to book business class flights using Aeroplan points. Step-by-step guide to finding award space on Air Canada, Lufthansa, SWISS, ANA, and more Star Alliance partners.',
     relatedCards: [
       { cardId: 'td-aeroplan-vi', cardSlug: 'td-aeroplan-visa-infinite', cardName: 'TD Aeroplan Visa Infinite', reason: 'Best Aeroplan-earning credit card' },
-      { cardId: 'amex-cobalt', cardSlug: 'american-express-cobalt', cardName: 'Amex Cobalt', reason: 'Earn Amex MR to transfer to Aeroplan at 1:1' },
-      { cardId: 'amex-platinum', cardSlug: 'american-express-platinum', cardName: 'Amex Platinum', reason: 'Highest points earn + 1:1 Aeroplan transfer' },
+      { cardId: 'amex-cobalt', cardSlug: 'amex-cobalt', cardName: 'Amex Cobalt', reason: 'Earn Amex MR to transfer to Aeroplan at 1:1' },
+      { cardId: 'amex-platinum', cardSlug: 'amex-platinum', cardName: 'Amex Platinum', reason: 'Highest points earn + 1:1 Aeroplan transfer' },
     ],
     relatedArticleIds: ['art-amex-mr-transfer-partners-canada', 'art-aeroplan-sweet-spots'],
     content: [
@@ -190,8 +190,8 @@ const staticArticles: Article[] = [
     metaDescription:
       'All Amex Membership Rewards transfer partners available to Canadians — ratios, transfer times, surcharges, and the best redemptions for each program.',
     relatedCards: [
-      { cardId: 'amex-cobalt', cardSlug: 'american-express-cobalt', cardName: 'Amex Cobalt', reason: 'Best Amex MR earner for everyday spend' },
-      { cardId: 'amex-platinum', cardSlug: 'american-express-platinum', cardName: 'Amex Platinum', reason: 'Highest earn rates + transfer bonus eligibility' },
+      { cardId: 'amex-cobalt', cardSlug: 'amex-cobalt', cardName: 'Amex Cobalt', reason: 'Best Amex MR earner for everyday spend' },
+      { cardId: 'amex-platinum', cardSlug: 'amex-platinum', cardName: 'Amex Platinum', reason: 'Highest earn rates + transfer bonus eligibility' },
     ],
     relatedArticleIds: ['art-fly-business-class-aeroplan', 'art-aeroplan-sweet-spots'],
     content: [
@@ -309,9 +309,9 @@ const staticArticles: Article[] = [
     metaDescription:
       'A complete beginner\'s guide to Canadian credit card points. Learn how points work, which programs are best, and how to earn your first free flight.',
     relatedCards: [
-      { cardId: 'amex-cobalt', cardSlug: 'american-express-cobalt', cardName: 'Amex Cobalt', reason: 'Best first travel rewards card for beginners' },
+      { cardId: 'amex-cobalt', cardSlug: 'amex-cobalt', cardName: 'Amex Cobalt', reason: 'Best first travel rewards card for beginners' },
       { cardId: 'td-aeroplan-vi', cardSlug: 'td-aeroplan-visa-infinite', cardName: 'TD Aeroplan Visa Infinite', reason: 'Best entry-level Aeroplan card' },
-      { cardId: 'scotiabank-scene-plus-visa', cardSlug: 'scotiabank-scene-plus-visa', cardName: 'Scotiabank Scene+ Visa', reason: 'Best no-fee starting point' },
+      { cardId: 'scotiabank-scene-plus-visa', cardSlug: 'scotiabank-scene-visa-card', cardName: 'Scotiabank Scene+ Visa', reason: 'Best no-fee starting point' },
     ],
     relatedArticleIds: ['art-best-travel-credit-cards-canada-2026', 'art-fly-business-class-aeroplan'],
     content: [
@@ -459,7 +459,7 @@ const staticArticles: Article[] = [
     metaDescription:
       'The 7 best Aeroplan award redemptions for Canadians in 2026. Business class to Europe, ANA The Room, Lufthansa First, and more sweet spots most people miss.',
     relatedCards: [
-      { cardId: 'amex-cobalt', cardSlug: 'american-express-cobalt', cardName: 'Amex Cobalt', reason: 'Earn Amex MR to transfer to Aeroplan at 1:1' },
+      { cardId: 'amex-cobalt', cardSlug: 'amex-cobalt', cardName: 'Amex Cobalt', reason: 'Earn Amex MR to transfer to Aeroplan at 1:1' },
       { cardId: 'td-aeroplan-vi', cardSlug: 'td-aeroplan-visa-infinite', cardName: 'TD Aeroplan Visa Infinite', reason: 'Direct Aeroplan earning' },
     ],
     relatedArticleIds: ['art-fly-business-class-aeroplan', 'art-amex-mr-transfer-partners-canada'],
@@ -559,10 +559,10 @@ const staticArticles: Article[] = [
     metaDescription:
       'Best travel credit cards in Canada for 2026 ranked and reviewed. Compare the Amex Cobalt, TD Aeroplan Visa Infinite, Scotiabank Passport, and more.',
     relatedCards: [
-      { cardId: 'amex-cobalt', cardSlug: 'american-express-cobalt', cardName: 'Amex Cobalt', reason: 'Best everyday travel card' },
-      { cardId: 'amex-platinum', cardSlug: 'american-express-platinum', cardName: 'Amex Platinum', reason: 'Best premium travel card' },
+      { cardId: 'amex-cobalt', cardSlug: 'amex-cobalt', cardName: 'Amex Cobalt', reason: 'Best everyday travel card' },
+      { cardId: 'amex-platinum', cardSlug: 'amex-platinum', cardName: 'Amex Platinum', reason: 'Best premium travel card' },
       { cardId: 'td-aeroplan-vi', cardSlug: 'td-aeroplan-visa-infinite', cardName: 'TD Aeroplan Visa Infinite', reason: 'Best Aeroplan-focused card' },
-      { cardId: 'scotiabank-passport-vi', cardSlug: 'scotiabank-passport-visa-infinite', cardName: 'Scotiabank Passport Visa Infinite', reason: 'Best no-FX travel card' },
+      { cardId: 'scotiabank-passport-vi', cardSlug: 'scotiabank-passport-visa-infinite-card', cardName: 'Scotiabank Passport Visa Infinite', reason: 'Best no-FX travel card' },
     ],
     relatedArticleIds: ['art-aeroplan-sweet-spots', 'art-beginners-guide-canadian-points'],
     content: [

@@ -1,17 +1,15 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Search, TrendingUp, CreditCard, Star, ArrowRight, Zap, Home, BookOpen } from 'lucide-react'
-import CreditCardCard from '@/components/cards/CreditCardCard'
 import ArticleCard from '@/components/blog/ArticleCard'
 import ToolCard from '@/components/tools/ToolCard'
 import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import SectionHeader from '@/components/ui/SectionHeader'
 import DisclaimerBlock from '@/components/shared/DisclaimerBlock'
-import { getEditorsPicks } from '@/data/cards'
 import { getFeaturedArticles } from '@/data/articles'
 import { getFeaturedOffers } from '@/data/offers'
 import { getFeaturedTools } from '@/data/tools'
-import { fetchCards, fetchOffers } from '@/lib/smart-card-api'
+import { fetchOffers } from '@/lib/smart-card-api'
 import type { CardOffer } from '@/types'
 
 export const metadata: Metadata = {
@@ -80,14 +78,10 @@ function OfferBadge({ offer }: { offer: CardOffer }) {
 export const revalidate = 3600
 
 export default async function HomePage() {
-  const [apiCards, apiOffers] = await Promise.all([
-    fetchCards({ featured: true, limit: 8 }),
-    fetchOffers({ limit: 12 }),
-  ])
+  const apiOffers = await fetchOffers({ limit: 20 })
 
-  const editorsPicks     = (apiCards.length > 0 ? apiCards.filter(c => c.editorsPick || c.featured) : getEditorsPicks()).slice(0, 4)
   const featuredArticles = getFeaturedArticles()
-  const featuredOffers   = apiOffers.length > 0 ? apiOffers.slice(0, 6) : getFeaturedOffers()
+  const featuredOffers   = apiOffers.length > 0 ? apiOffers.slice(0, 5) : getFeaturedOffers().slice(0, 5)
   const featuredTools    = getFeaturedTools()
 
   return (
@@ -192,31 +186,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ─── Editor's Picks ────────────────────────────────────────────────────── */}
-      <section className="bg-parchment-100 py-12">
-        <div className="container-site">
-          <div className="flex items-end justify-between mb-6">
-            <SectionHeader
-              label="Editor's Picks"
-              title="Our Top Card Recommendations"
-              subtitle="Handpicked by our editorial team for Canadians at every life stage."
-            />
-            <Link href="/credit-cards" className="text-sm text-navy-600 font-medium hover:text-navy-800 transition-colors hidden sm:flex items-center gap-1">
-              All cards <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {editorsPicks.map(card => (
-              <CreditCardCard key={card.id} card={card} variant="grid" />
-            ))}
-          </div>
-          <div className="mt-5 sm:hidden">
-            <Link href="/credit-cards" className="btn-secondary w-full text-center text-sm">
-              Browse all cards
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* ─── Latest Articles ───────────────────────────────────────────────────── */}
       <section className="bg-parchment-50 border-t border-parchment-200 py-12">

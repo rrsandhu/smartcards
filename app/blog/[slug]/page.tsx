@@ -10,6 +10,7 @@ import DisclaimerBlock from '@/components/shared/DisclaimerBlock'
 import Badge from '@/components/ui/Badge'
 import { getArticleBySlug, articles, getRelatedArticles } from '@/data/articles'
 import { getCardBySlug } from '@/data/cards'
+import { fetchCard } from '@/lib/smart-card-api'
 import { formatDate, categoryLabel } from '@/lib/utils'
 import type { ArticleSection } from '@/types'
 
@@ -126,7 +127,7 @@ const categoryVariant: Record<string, 'navy' | 'gold' | 'green' | 'gray' | 'blue
   news:                'gray',
 }
 
-export default function ArticlePage({ params }: Props) {
+export default async function ArticlePage({ params }: Props) {
   const article = getArticleBySlug(params.slug)
   if (!article) notFound()
 
@@ -135,7 +136,11 @@ export default function ArticlePage({ params }: Props) {
     : []
 
   const relatedCards = article.relatedCards
-    ? article.relatedCards.map(rc => getCardBySlug(rc.cardSlug)).filter(Boolean)
+    ? await Promise.all(
+        article.relatedCards.map(rc =>
+          Promise.resolve(getCardBySlug(rc.cardSlug)).then(local => local ?? fetchCard(rc.cardSlug))
+        )
+      ).then(results => results.filter(Boolean))
     : []
 
   // Build table of contents from h2 sections
