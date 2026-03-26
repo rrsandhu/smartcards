@@ -7,12 +7,11 @@ import ToolCard from '@/components/tools/ToolCard'
 import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import SectionHeader from '@/components/ui/SectionHeader'
 import DisclaimerBlock from '@/components/shared/DisclaimerBlock'
-import { getFeaturedCards, getEditorsPicks } from '@/data/cards'
+import { getEditorsPicks } from '@/data/cards'
 import { getFeaturedArticles } from '@/data/articles'
 import { getFeaturedOffers } from '@/data/offers'
 import { getFeaturedTools } from '@/data/tools'
 import { fetchCards, fetchOffers } from '@/lib/smart-card-api'
-import { formatCAD, categoryLabel } from '@/lib/utils'
 import type { CardOffer } from '@/types'
 
 export const metadata: Metadata = {
@@ -31,43 +30,49 @@ const categories = [
 
 function OfferBadge({ offer }: { offer: CardOffer }) {
   return (
-    <div className="card-surface p-5 flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-2">
+    <div className="card-surface overflow-hidden flex flex-col">
+      {/* Card image header */}
+      <div className="h-36 bg-gradient-to-br from-navy-600 to-navy-900 relative flex items-center justify-center">
         {offer.imageUrl ? (
-          <img src={offer.imageUrl} alt={offer.cardName} className="h-10 w-16 object-contain rounded" />
+          <img
+            src={offer.imageUrl}
+            alt={offer.cardName}
+            className="h-28 w-auto object-contain drop-shadow-lg"
+          />
         ) : (
-          <span className="text-xs font-semibold text-navy-700 bg-navy-100 px-2.5 py-1 rounded-full">
-            {offer.issuer}
-          </span>
+          <span className="text-white font-bold text-lg opacity-40">{offer.issuer}</span>
         )}
         {offer.isLimitedTime && (
-          <span className="text-xs font-semibold text-red-700 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1">
+          <span className="absolute top-3 right-3 text-xs font-semibold text-red-700 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1">
             <Zap className="w-2.5 h-2.5" />Limited
           </span>
         )}
       </div>
-      <div>
-        <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-1">{offer.cardName}</h3>
-        <p className="text-xs text-gray-500 mb-1">{offer.issuer}</p>
-        <p className="text-sm text-gray-700">{offer.headline}</p>
-        {offer.spendRequirement && (
-          <p className="text-xs text-gray-500 mt-1">Spend: {offer.spendRequirement}</p>
+
+      <div className="p-4 flex flex-col gap-3 flex-1">
+        <div>
+          <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-0.5">{offer.cardName}</h3>
+          <p className="text-xs text-gray-500 mb-2">{offer.issuer}</p>
+          <p className="text-sm text-gray-700 leading-snug">{offer.headline}</p>
+          {offer.spendRequirement && (
+            <p className="text-xs text-gray-500 mt-1.5">Spend: {offer.spendRequirement}</p>
+          )}
+        </div>
+        {offer.affiliateLink ? (
+          <a
+            href={offer.affiliateLink}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="btn-primary text-sm text-center mt-auto"
+          >
+            Apply Now
+          </a>
+        ) : (
+          <Link href={`/credit-cards/${offer.cardSlug}`} className="btn-secondary text-sm text-center mt-auto">
+            View Card
+          </Link>
         )}
       </div>
-      {offer.affiliateLink ? (
-        <a
-          href={offer.affiliateLink}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          className="btn-primary text-sm text-center mt-auto"
-        >
-          Apply Now
-        </a>
-      ) : (
-        <Link href={`/credit-cards/${offer.cardSlug}`} className="btn-secondary text-sm text-center mt-auto">
-          View Card
-        </Link>
-      )}
     </div>
   )
 }
@@ -80,10 +85,9 @@ export default async function HomePage() {
     fetchOffers({ limit: 12 }),
   ])
 
-  const featuredCards    = (apiCards.length > 0 ? apiCards : getFeaturedCards()).slice(0, 4)
-  const editorsPicks     = (apiCards.length > 0 ? apiCards.filter(c => c.editorsPick || c.featured) : getEditorsPicks()).slice(0, 3)
+  const editorsPicks     = (apiCards.length > 0 ? apiCards.filter(c => c.editorsPick || c.featured) : getEditorsPicks()).slice(0, 4)
   const featuredArticles = getFeaturedArticles()
-  const featuredOffers   = apiOffers.length > 0 ? apiOffers.slice(0, 4) : getFeaturedOffers()
+  const featuredOffers   = apiOffers.length > 0 ? apiOffers.slice(0, 6) : getFeaturedOffers()
   const featuredTools    = getFeaturedTools()
 
   return (
@@ -211,29 +215,6 @@ export default async function HomePage() {
               Browse all cards
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* ─── Featured Cards ────────────────────────────────────────────────────── */}
-      <section className="container-site py-12">
-        <div className="flex items-end justify-between mb-6">
-          <SectionHeader
-            label="Top Cards"
-            title="Featured Credit Cards"
-          />
-          <Link href="/credit-cards" className="text-sm text-navy-600 font-medium hover:text-navy-800 transition-colors hidden sm:flex items-center gap-1">
-            Compare all <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-        <div className="space-y-4">
-          {featuredCards.map(card => (
-            <CreditCardCard key={card.id} card={card} variant="list" />
-          ))}
-        </div>
-        <div className="mt-5 text-center">
-          <Link href="/credit-cards" className="btn-primary">
-            Browse All Canadian Credit Cards
-          </Link>
         </div>
       </section>
 

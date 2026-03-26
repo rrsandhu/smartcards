@@ -652,6 +652,183 @@ const staticArticles: Article[] = [
       },
     ],
   },
+  // ─── Best Cash Back Credit Cards Canada 2026 ────────────────────────────────
+  {
+    id: 'art-best-cash-back-cards-canada-2026',
+    slug: 'best-cash-back-credit-cards-canada-2026',
+    title: 'Best Cash Back Credit Cards in Canada for 2026',
+    excerpt:
+      'No points math required. We ranked the top cash back cards in Canada by actual dollars returned — from no-fee everyday earners to premium cards that pay back 4% on groceries.',
+    category: 'credit-card-deals',
+    author: { name: 'Sarah Chen', title: 'Credit Cards Editor' },
+    publishDate: '2026-03-20',
+    heroImageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&auto=format&fit=crop&q=80',
+    heroImageAlt: 'Hands holding a credit card over a laptop',
+    tags: ['cash-back', 'no-fee', 'groceries', 'everyday-spending', 'canada'],
+    readingTimeMinutes: 7,
+    featured: true,
+    editorsPick: true,
+    metaDescription:
+      'The best cash back credit cards in Canada for 2026. Compare earn rates on groceries, gas, and everyday purchases. No-fee and premium options ranked by real dollar returns.',
+    relatedCards: [],
+    content: [
+      {
+        type: 'paragraph',
+        body: 'Cash back credit cards are the simplest way to get rewarded — no airline loyalty programs, no point valuations, just real money back on every purchase. But not all cash back cards are equal: earn rates vary wildly by category, and annual fees can eat into your returns. We crunched the numbers on every major Canadian cash back card to find the best options for 2026.',
+      },
+      {
+        type: 'callout',
+        calloutType: 'tip',
+        heading: 'Top Pick: Tangerine Money-Back Credit Card',
+        body: 'No annual fee. Earn 2% in up to 3 categories you choose (groceries, gas, restaurants, recurring bills, etc.) and 0.5% on everything else. Best no-fee cash back card in Canada for most Canadians.',
+      },
+      {
+        type: 'h2',
+        heading: 'Best No-Fee Cash Back Cards',
+      },
+      {
+        type: 'paragraph',
+        body: 'The Tangerine Money-Back Credit Card stands out as the best no-fee option because it lets you choose your own 2% categories — up to three of them. Most Canadians select groceries, gas, and recurring bills, which covers the majority of monthly spending. There\'s no cap on cash back earned and no annual fee to offset.',
+      },
+      {
+        type: 'paragraph',
+        body: 'The Rogers Red World Elite Mastercard earns 1.5% cash back on all purchases with no annual fee (waived first year) — making it a strong flat-rate option for those who don\'t want to think about categories. It also earns 3% on purchases made in US dollars, making it one of the best cards for online US shopping.',
+      },
+      {
+        type: 'h2',
+        heading: 'Best Premium Cash Back Cards',
+      },
+      {
+        type: 'paragraph',
+        body: 'The Scotia Momentum Visa Infinite is the perennial Canadian favourite for high spenders: 4% cash back on groceries and recurring bills, 2% on gas and transit, 1% everywhere else. The $120 annual fee (waived first year) is quickly offset if you spend $500+ per month on groceries alone.',
+      },
+      {
+        type: 'paragraph',
+        body: 'The CIBC Dividend Visa Infinite matches Scotia on grocery earn rate (4%) and adds 2% on gas, EV charging, and transit. For families with large grocery bills, either card can return $300–$500 per year in cash back — well above the annual fee.',
+      },
+      {
+        type: 'h2',
+        heading: 'How Much Cash Back Can You Actually Earn?',
+      },
+      {
+        type: 'paragraph',
+        body: 'Based on a typical Canadian household spending $1,200/month on groceries, $300 on gas, $400 on restaurants, and $600 on everything else: the Scotia Momentum Visa Infinite would return approximately $612/year before the $120 fee — a net $492 annual benefit. The Tangerine Money-Back Card (no-fee, 2% groceries/gas/dining) would return approximately $504/year with zero fee.',
+      },
+    ],
+  },
+
+  // ─── Bank of Canada Rate Impact on Mortgages ────────────────────────────────
+  {
+    id: 'art-boc-rate-cuts-mortgage-impact-2026',
+    slug: 'bank-of-canada-rate-cuts-mortgage-impact-2026',
+    title: 'Bank of Canada Rate Cuts: What It Means for Your Mortgage in 2026',
+    excerpt:
+      'The Bank of Canada has cut its overnight rate four times since mid-2024. Here\'s exactly how that flows through to variable-rate mortgages, HELOCs, and renewal decisions.',
+    category: 'mortgage-news',
+    author: { name: 'Priya Nair', title: 'Mortgage & Housing Reporter' },
+    publishDate: '2026-03-18',
+    heroImageUrl: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&auto=format&fit=crop&q=80',
+    heroImageAlt: 'Modern Canadian home exterior in summer',
+    tags: ['bank-of-canada', 'rate-cut', 'variable-rate', 'mortgage-renewal', 'heloc', 'housing'],
+    readingTimeMinutes: 6,
+    featured: true,
+    metaDescription:
+      'Bank of Canada rate cuts explained. How lower overnight rates affect variable mortgages, HELOCs, and fixed-rate renewals in 2026 — and what Canadians should do now.',
+    relatedCards: [],
+    content: [
+      {
+        type: 'paragraph',
+        body: 'The Bank of Canada\'s overnight rate currently sits at 2.75% — down significantly from its peak of 5.0% in 2023. For Canadians with variable-rate mortgages or HELOCs tied to prime, each quarter-point cut translates directly to lower monthly payments. But the picture for fixed-rate mortgages and upcoming renewals is more complicated.',
+      },
+      {
+        type: 'callout',
+        calloutType: 'info',
+        heading: 'Current Rate Context',
+        body: 'Bank of Canada overnight rate: 2.75% (as of March 2026). Prime rate at most major banks: 4.95%. Variable-rate mortgages typically priced at Prime minus 0.5% to Prime minus 1.0%.',
+      },
+      {
+        type: 'h2',
+        heading: 'Variable-Rate Mortgages: Immediate Relief',
+      },
+      {
+        type: 'paragraph',
+        body: 'If you have a variable-rate mortgage, you\'ve already felt the benefit of rate cuts. Every 25 basis point reduction in the overnight rate reduces prime by the same amount — and your rate adjusts automatically. On a $500,000 mortgage with 22 years remaining, moving from 5.45% to 4.45% saves approximately $270/month in interest costs.',
+      },
+      {
+        type: 'h2',
+        heading: 'Fixed-Rate Renewals: A Different Story',
+      },
+      {
+        type: 'paragraph',
+        body: 'Fixed mortgage rates are driven by the Government of Canada 5-year bond yield — not the overnight rate. Bonds have been relatively stable despite BoC cuts, which means Canadians renewing from 2019–2021 ultra-low fixed rates (1.79%–2.39%) still face significantly higher renewal rates in the 4.2%–4.8% range. Payment shock at renewal remains the defining mortgage story of 2026.',
+      },
+      {
+        type: 'h2',
+        heading: 'What Should You Do?',
+      },
+      {
+        type: 'paragraph',
+        body: 'If your mortgage renews in the next 12 months, start comparing rates now — not the week before renewal. Brokers can lock in rates 120 days in advance. If you\'re already variable and comfortable with volatility, holding may make sense if further cuts are expected. For HELOCs, the lower prime rate means debt paydown is more effective now — consider accelerating payments while you have breathing room.',
+      },
+    ],
+  },
+
+  // ─── How to Maximize Scene+ Points ─────────────────────────────────────────
+  {
+    id: 'art-maximize-scene-plus-points-canada',
+    slug: 'how-to-maximize-scene-plus-points-canada',
+    title: 'How to Maximize Scene+ Points: The Complete Canadian Guide',
+    excerpt:
+      'Scene+ is now one of Canada\'s largest loyalty programs — covering Scotiabank cards, Cineplex, Empire grocery stores, and more. Here\'s how to stack and redeem for maximum value.',
+    category: 'points-deals',
+    author: { name: 'James Park', title: 'Points & Deals Reporter' },
+    publishDate: '2026-03-10',
+    heroImageUrl: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=1200&auto=format&fit=crop&q=80',
+    heroImageAlt: 'Movie popcorn and tickets in a cinema',
+    tags: ['scene-plus', 'scotiabank', 'cineplex', 'sobeys', 'loyalty-program', 'points-redemption'],
+    readingTimeMinutes: 8,
+    featured: true,
+    editorsPick: true,
+    metaDescription:
+      'Complete guide to Scene+ points in Canada. How to earn faster with Scotiabank credit cards and where to redeem for best value at Cineplex, Sobeys, Empire stores, and travel.',
+    relatedCards: [],
+    content: [
+      {
+        type: 'paragraph',
+        body: 'Scene+ started as a Cineplex movie rewards program. After Scotiabank\'s acquisition and the integration of Empire\'s grocery network (Sobeys, Safeway, IGA, FreshCo, Farm Boy), it has become a legitimate everyday loyalty powerhouse. With the right Scotiabank credit card, Canadians can now earn Scene+ points on every grocery run, gas fill, and dining bill — and redeem for travel, movies, and groceries.',
+      },
+      {
+        type: 'callout',
+        calloutType: 'tip',
+        heading: 'Best Scene+ credit card',
+        body: 'The Scotiabank Gold American Express earns 6 Scene+ points per dollar at Empire grocery stores (Sobeys, Safeway, IGA), 5 pts at restaurants and food delivery, 3 pts on gas and transit, and 1 pt elsewhere. Annual fee: $120 (waived first year).',
+      },
+      {
+        type: 'h2',
+        heading: 'Where to Earn Scene+ Points',
+      },
+      {
+        type: 'paragraph',
+        body: 'The best earning opportunities: (1) Scotiabank credit cards — especially the Gold Amex for groceries and dining, (2) Empire stores — Sobeys, Safeway, IGA, FreshCo, Farm Boy, Thrifty Foods — earn points both on the card and via the in-store Scene+ scan, (3) Cineplex — earn on every movie ticket and concession purchase.',
+      },
+      {
+        type: 'h2',
+        heading: 'Best Scene+ Redemptions',
+      },
+      {
+        type: 'paragraph',
+        body: 'Scene+ points are worth approximately 1 cent each at most redemption options. The best-value redemptions are: (1) Cineplex tickets — 1,000 points = $10 off a ticket, straightforward 1 cpp, (2) Travel through Scene+ Travel portal — flights, hotels, car rentals redeemed at 1 cpp, (3) Sobeys/Empire grocery purchases — convenient if you shop there anyway. Avoid using points for gift cards or merchandise, where the value often drops below 0.8 cpp.',
+      },
+      {
+        type: 'h2',
+        heading: 'Stacking Tips',
+      },
+      {
+        type: 'paragraph',
+        body: 'The single biggest Scene+ tip: always scan your Scene+ card or app at Sobeys/Safeway in addition to paying with your Scotiabank Gold Amex. You\'ll earn points twice — once from the store loyalty program and once from the credit card. On a $200 grocery trip, that\'s 200 bonus points (card) + 200 store points = 400+ points vs. just using another card.',
+      },
+    ],
+  },
 ]
 
 // Merge static + auto-generated, newest first

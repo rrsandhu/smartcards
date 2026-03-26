@@ -44,10 +44,18 @@ export default function ArticleCard({ article, variant = 'default' }: Props) {
     return (
       <div className="card-surface overflow-hidden group">
         {/* Hero image */}
-        <div className="h-52 bg-parchment-200 relative">
-          <div className="w-full h-full bg-gradient-to-br from-navy-600 to-navy-900 flex items-center justify-center">
-            <span className="text-white font-bold text-2xl opacity-20">PN</span>
-          </div>
+        <div className="h-52 bg-parchment-200 relative overflow-hidden">
+          {article.heroImageUrl ? (
+            <img
+              src={article.heroImageUrl}
+              alt={article.heroImageAlt ?? article.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-navy-600 to-navy-900 flex items-center justify-center">
+              <span className="text-white font-bold text-2xl opacity-20">SC</span>
+            </div>
+          )}
           {article.editorsPick && (
             <span className="absolute top-3 left-3 flex items-center gap-1 bg-gold-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
               <Star className="w-3 h-3" />Editor's Pick
