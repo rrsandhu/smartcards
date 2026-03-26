@@ -177,14 +177,20 @@ export default async function CardDetailPage({ params }: Props) {
 
             {/* Apply CTA */}
             <div className="flex flex-col sm:flex-row gap-3">
-              <a
-                href={card.affiliateLink ?? card.applyUrl ?? '#'}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
-                className="btn-primary flex-1 text-center flex items-center justify-center gap-2"
-              >
-                Apply for the {card.name} <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+              {(card.affiliateLink || card.applyUrl) ? (
+                <a
+                  href={(card.affiliateLink ?? card.applyUrl)!}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="btn-primary flex-1 text-center flex items-center justify-center gap-2"
+                >
+                  Apply for the {card.name} <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              ) : (
+                <span className="btn-primary flex-1 text-center opacity-50 cursor-not-allowed select-none">
+                  Visit Issuer Website to Apply
+                </span>
+              )}
               <Link href="/compare" className="btn-secondary flex-1 text-center text-sm">
                 Compare Cards
               </Link>
@@ -367,14 +373,20 @@ export default async function CardDetailPage({ params }: Props) {
                 </span>
               </div>
             </div>
-            <a
-              href={card.affiliateLink ?? card.applyUrl ?? '#'}
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-              className="btn-primary w-full text-center text-sm"
-            >
-              Apply Now
-            </a>
+            {(card.affiliateLink || card.applyUrl) ? (
+              <a
+                href={(card.affiliateLink ?? card.applyUrl)!}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                className="btn-primary w-full text-center text-sm"
+              >
+                Apply Now
+              </a>
+            ) : (
+              <span className="btn-primary w-full text-center text-sm opacity-50 cursor-not-allowed select-none block">
+                Apply on Issuer Site
+              </span>
+            )}
             <Link href="/compare" className="btn-ghost w-full text-center text-sm mt-2 block">
               Add to compare
             </Link>

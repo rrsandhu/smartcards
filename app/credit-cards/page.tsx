@@ -1,18 +1,21 @@
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import DisclaimerBlock from '@/components/shared/DisclaimerBlock'
-import { fetchCards } from '@/lib/smart-card-api'
+import { fetchCards, fetchIssuers } from '@/lib/smart-card-api'
 import CardsClient from './CardsClient'
 
 export const revalidate = 3600
 
 export default async function CreditCardsPage() {
-  const allCards = await fetchCards({ limit: 100 })
+  const [allCards, issuers] = await Promise.all([
+    fetchCards({ limit: 100 }),
+    fetchIssuers(),
+  ])
 
   return (
     <div className="container-site py-8">
       <Breadcrumbs crumbs={[{ label: 'Credit Cards' }]} />
       <DisclaimerBlock />
-      <CardsClient cards={allCards} />
+      <CardsClient cards={allCards} issuers={issuers} />
 
       {/* SEO copy */}
       <div className="mt-14 max-w-3xl">

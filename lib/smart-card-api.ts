@@ -20,21 +20,24 @@ interface ApiOffer {
   headline: string
   details?: string
   points_value: number | null
-  cashback_value: number | null
+  cashback_value: string | null   // Postgres NUMERIC comes back as string
   spend_requirement: number | null
   spend_timeframe_days: number | null
   extra_perks?: string[]
   is_limited_time: boolean
-  expires_at: string | null
+  expires_at: string | null       // YYYY-MM-DD, not a timestamp
   is_verified: boolean
+  is_better_than_usual?: boolean
   source_priority: number
   confidence_score: number
   source_url?: string
   last_seen_at?: string
   card?: {
+    id?: string
     name: string
     slug: string
     image_url: string | null
+    referral_url?: string | null
     issuer: { slug: string; name: string }
   }
 }
@@ -51,12 +54,12 @@ interface ApiCard {
   rewards_type: 'points' | 'cashback' | 'hybrid'
   earn_rate_base: number | null
   earn_rate_multipliers: Record<string, number> | null
-  transfer_partners?: string[]
+  transfer_partners?: string[] | null
   lounge_access: boolean
   travel_insurance: boolean
   purchase_protection: boolean
   foreign_transaction_fee: number | null
-  credit_score_min?: string
+  credit_score_min?: string | null
   apply_url: string | null
   referral_url: string | null
   image_url: string | null
@@ -64,12 +67,19 @@ interface ApiCard {
   pros?: string[]
   cons?: string[]
   best_for?: string[]
-  min_income?: number
+  min_income?: number | null
   is_featured: boolean
   tags: string[]
   issuer: { id: string; name: string; slug: string; website?: string }
-  current_offer?: ApiOffer[]
-  offers?: ApiOffer[]
+  current_offers?: ApiOffer[]   // list + detail endpoint (new field name)
+}
+
+export interface ApiIssuer {
+  id: string
+  name: string
+  slug: string
+  logo_url: string | null
+  website: string
 }
 
 // ─── Adapters ─────────────────────────────────────────────────────────────────
@@ -104,12 +114,14 @@ function toCategories(card: ApiCard): CardCategory[] {
 
 const MULTIPLIER_LABEL: Record<string, string> = {
   groceries:        'Groceries',
+  grocery:          'Groceries',
   dining:           'Dining & restaurants',
   gas:              'Gas & fuel',
   travel:           'Travel',
   transit:          'Transit & commuting',
   streaming:        'Streaming services',
   drugstore:        'Drugstore & pharmacy',
+  entertainment:    'Entertainment',
   foreign_currency: 'Foreign currency',
   other:            'Everything else',
 }
@@ -117,14 +129,19 @@ const MULTIPLIER_LABEL: Record<string, string> = {
 function toEarnRates(card: ApiCard): EarnRate[] {
   const rates: EarnRate[] = []
   const unit = card.rewards_type === 'cashback' ? 'percent' : 'points'
+  const seen = new Set<string>()
 
   if (card.earn_rate_multipliers) {
     for (const [key, rate] of Object.entries(card.earn_rate_multipliers)) {
-      rates.push({ category: MULTIPLIER_LABEL[key] ?? key, rate, unit })
+      const label = MULTIPLIER_LABEL[key] ?? key
+      if (!seen.has(label)) {
+        rates.push({ category: label, rate, unit })
+        seen.add(label)
+      }
     }
   }
 
-  if (card.earn_rate_base) {
+  if (card.earn_rate_base && !seen.has('Everything else')) {
     rates.push({ category: 'Everything else', rate: card.earn_rate_base, unit })
   }
 
@@ -136,15 +153,20 @@ function toEarnRates(card: ApiCard): EarnRate[] {
 }
 
 export function adaptCard(api: ApiCard): CreditCard {
-  const offer = (api.current_offer ?? api.offers)?.[0]
+  const offer = api.current_offers?.[0]
+  const cashback = offer?.cashback_value ? parseFloat(offer.cashback_value) : null
+
   const welcomeBonus = offer?.headline ?? undefined
   const bonusSummary = offer
     ? offer.points_value
       ? `Earn ${offer.points_value.toLocaleString()} ${api.rewards_program ?? 'points'}`
-      : offer.cashback_value
-        ? `${offer.cashback_value}% cash back welcome offer`
+      : cashback
+        ? `${cashback}% cash back welcome offer`
         : offer.headline
     : undefined
+
+  // Only set affiliateLink/applyUrl when a real URL exists
+  const applyLink = api.referral_url ?? api.apply_url ?? undefined
 
   return {
     id:                        api.slug,
@@ -166,19 +188,25 @@ export function adaptCard(api: ApiCard): CreditCard {
     bestFor:                   api.best_for ?? [],
     pros:                      api.pros ?? [],
     cons:                      api.cons ?? [],
-    affiliateLink:             api.referral_url ?? api.apply_url ?? '#',
-    applyUrl:                  api.apply_url ?? '#',
+    affiliateLink:             applyLink,
+    applyUrl:                  applyLink,
     imageUrl:                  api.image_url ?? undefined,
     featured:                  api.is_featured,
     editorsPick:               api.is_featured && (api.tags?.includes('editors-pick') ?? false),
     tags:                      api.tags ?? [],
     categories:                toCategories(api),
     lastUpdated:               new Date().toISOString().split('T')[0],
+    incomeRequirementPersonal: api.min_income ?? undefined,
   }
 }
 
 export function adaptOffer(api: ApiOffer): CardOffer {
   const card = api.card
+  const cashback = api.cashback_value ? parseFloat(api.cashback_value) : null
+
+  // Safe expires_at parsing (treat as end-of-day to avoid UTC offset issues)
+  const offerExpiry = api.expires_at ? api.expires_at : undefined
+
   return {
     id:                api.id,
     cardId:            card?.slug ?? api.card_id ?? '',
@@ -187,16 +215,16 @@ export function adaptOffer(api: ApiOffer): CardOffer {
     issuer:            card?.issuer?.name ?? '',
     offerType:         api.is_limited_time ? 'limited-time' : 'welcome-bonus',
     headline:          api.headline,
-    bonusAmount:       api.points_value ?? api.cashback_value ?? undefined,
-    bonusUnit:         api.points_value ? 'points' : api.cashback_value ? 'percent' : undefined,
+    bonusAmount:       api.points_value ?? cashback ?? undefined,
+    bonusUnit:         api.points_value ? 'points' : cashback ? 'percent' : undefined,
     spendRequirement:  api.spend_requirement
       ? `$${api.spend_requirement.toLocaleString()}${api.spend_timeframe_days ? ` in ${Math.round(api.spend_timeframe_days / 30)} months` : ''}`
       : undefined,
     spendAmount:       api.spend_requirement ?? undefined,
     spendPeriodMonths: api.spend_timeframe_days ? Math.round(api.spend_timeframe_days / 30) : undefined,
-    offerExpiry:       api.expires_at ?? undefined,
+    offerExpiry,
     isLimitedTime:     api.is_limited_time,
-    affiliateLink:     api.source_url ?? '#',
+    affiliateLink:     card?.referral_url ?? api.source_url ?? undefined,
     featured:          api.confidence_score >= 70,
     lastUpdated:       api.last_seen_at ?? new Date().toISOString(),
     tags:              [],
@@ -209,16 +237,20 @@ export async function fetchCards(params?: {
   issuer?: string
   tier?: string
   rewards_type?: string
+  tags?: string
   featured?: boolean
   limit?: number
+  page?: number
 }): Promise<CreditCard[]> {
   try {
     const qs = new URLSearchParams()
     if (params?.issuer)       qs.set('issuer', params.issuer)
     if (params?.tier)         qs.set('tier', params.tier)
     if (params?.rewards_type) qs.set('rewards_type', params.rewards_type)
+    if (params?.tags)         qs.set('tags', params.tags)
     if (params?.featured)     qs.set('featured', 'true')
     if (params?.limit)        qs.set('limit', String(params.limit))
+    if (params?.page)         qs.set('page', String(params.page))
 
     const res = await fetch(`${API}/api/cards?${qs}`, { next: { revalidate: 3600 } })
     if (!res.ok) return []
@@ -243,11 +275,13 @@ export async function fetchCard(slug: string): Promise<CreditCard | null> {
 export async function fetchOffers(params?: {
   limited?: boolean
   limit?: number
+  page?: number
 }): Promise<CardOffer[]> {
   try {
     const qs = new URLSearchParams()
     if (params?.limited) qs.set('limited', 'true')
     qs.set('limit', String(params?.limit ?? 50))
+    if (params?.page) qs.set('page', String(params.page))
 
     const res = await fetch(`${API}/api/offers?${qs}`, { next: { revalidate: 3600 } })
     if (!res.ok) return []
@@ -258,14 +292,25 @@ export async function fetchOffers(params?: {
   }
 }
 
+export async function fetchIssuers(): Promise<ApiIssuer[]> {
+  try {
+    const res = await fetch(`${API}/api/issuers`, { next: { revalidate: 86400 } })
+    if (!res.ok) return []
+    const { issuers } = await res.json()
+    return issuers as ApiIssuer[]
+  } catch {
+    return []
+  }
+}
+
 export async function trackClick(cardId: string, offerId?: string, sourcePage?: string) {
   try {
-    await fetch(`${API}/api/track-click`, {
+    fetch(`${API}/api/track-click`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ card_id: cardId, offer_id: offerId, source_page: sourcePage }),
     })
   } catch {
-    // non-critical — don't throw
+    // non-critical — fire and forget
   }
 }

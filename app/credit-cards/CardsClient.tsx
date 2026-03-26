@@ -6,6 +6,7 @@ import { LayoutGrid, List } from 'lucide-react'
 import CreditCardCard from '@/components/cards/CreditCardCard'
 import SectionHeader from '@/components/ui/SectionHeader'
 import type { CreditCard, CardCategory } from '@/types'
+import type { ApiIssuer } from '@/lib/smart-card-api'
 import { categoryLabel } from '@/lib/utils'
 
 const filterCategories: { value: CardCategory | 'all'; label: string }[] = [
@@ -26,8 +27,14 @@ const sortOptions = [
   { value: 'name',      label: 'Name: A → Z' },
 ]
 
-export default function CardsClient({ cards }: { cards: CreditCard[] }) {
+interface Props {
+  cards: CreditCard[]
+  issuers: ApiIssuer[]
+}
+
+export default function CardsClient({ cards, issuers }: Props) {
   const [activeCategory, setActiveCategory] = useState<string>('all')
+  const [activeIssuer, setActiveIssuer]     = useState<string>('all')
   const [sortBy, setSortBy]                 = useState('featured')
   const [viewMode, setViewMode]             = useState<'grid' | 'list'>('list')
 
@@ -36,6 +43,9 @@ export default function CardsClient({ cards }: { cards: CreditCard[] }) {
     if (activeCategory !== 'all') {
       result = result.filter(c => c.categories.includes(activeCategory as CardCategory))
     }
+    if (activeIssuer !== 'all') {
+      result = result.filter(c => c.issuer.toLowerCase().replace(/\s+/g, '-') === activeIssuer || c.issuer.toLowerCase() === activeIssuer)
+    }
     switch (sortBy) {
       case 'fee-low':  result.sort((a, b) => a.annualFee - b.annualFee); break
       case 'fee-high': result.sort((a, b) => b.annualFee - a.annualFee); break
@@ -43,7 +53,7 @@ export default function CardsClient({ cards }: { cards: CreditCard[] }) {
       default:         result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)); break
     }
     return result
-  }, [activeCategory, sortBy, cards])
+  }, [activeCategory, activeIssuer, sortBy, cards])
 
   return (
     <>
@@ -56,50 +66,61 @@ export default function CardsClient({ cards }: { cards: CreditCard[] }) {
       </div>
 
       <div className="flex flex-col gap-6">
-        {/* Filter bar */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 flex-1 scrollbar-hide">
-            {filterCategories.map(cat => (
-              <button
-                key={cat.value}
-                onClick={() => setActiveCategory(cat.value)}
-                className={`px-3.5 py-1.5 rounded-full text-sm font-medium whitespace-nowrap border transition-colors flex-shrink-0 ${
-                  activeCategory === cat.value
-                    ? 'bg-navy-600 text-white border-navy-600'
-                    : 'bg-white text-gray-700 border-parchment-300 hover:border-navy-300'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <select
-              value={sortBy}
-              onChange={e => setSortBy(e.target.value)}
-              className="select-field text-sm py-1.5 w-44"
+        {/* Category filters */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+          {filterCategories.map(cat => (
+            <button
+              key={cat.value}
+              onClick={() => setActiveCategory(cat.value)}
+              className={`px-3.5 py-1.5 rounded-full text-sm font-medium whitespace-nowrap border transition-colors flex-shrink-0 ${
+                activeCategory === cat.value
+                  ? 'bg-navy-600 text-white border-navy-600'
+                  : 'bg-white text-gray-700 border-parchment-300 hover:border-navy-300'
+              }`}
             >
-              {sortOptions.map(o => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Sort + Issuer + View */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          {issuers.length > 0 && (
+            <select
+              value={activeIssuer}
+              onChange={e => setActiveIssuer(e.target.value)}
+              className="select-field text-sm py-1.5 w-48"
+            >
+              <option value="all">All Issuers</option>
+              {issuers.map(i => (
+                <option key={i.slug} value={i.slug}>{i.name}</option>
               ))}
             </select>
-            <div className="flex border border-parchment-300 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 ${viewMode === 'list' ? 'bg-navy-50 text-navy-700' : 'bg-white text-gray-500'}`}
-                title="List view"
-              >
-                <List className="w-4 h-4" />
-              </button>
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 ${viewMode === 'grid' ? 'bg-navy-50 text-navy-700' : 'bg-white text-gray-500'}`}
-                title="Grid view"
-              >
-                <LayoutGrid className="w-4 h-4" />
-              </button>
-            </div>
+          )}
+          <select
+            value={sortBy}
+            onChange={e => setSortBy(e.target.value)}
+            className="select-field text-sm py-1.5 w-44"
+          >
+            {sortOptions.map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+          <div className="flex border border-parchment-300 rounded-lg overflow-hidden ml-auto">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-2 ${viewMode === 'list' ? 'bg-navy-50 text-navy-700' : 'bg-white text-gray-500'}`}
+              title="List view"
+            >
+              <List className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-2 ${viewMode === 'grid' ? 'bg-navy-50 text-navy-700' : 'bg-white text-gray-500'}`}
+              title="Grid view"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
@@ -134,7 +155,7 @@ export default function CardsClient({ cards }: { cards: CreditCard[] }) {
         {filtered.length === 0 && (
           <div className="text-center py-16 text-gray-500">
             <p className="text-lg font-semibold mb-2">No cards found</p>
-            <p className="text-sm">Try selecting a different category filter.</p>
+            <p className="text-sm">Try selecting a different filter.</p>
           </div>
         )}
       </div>
