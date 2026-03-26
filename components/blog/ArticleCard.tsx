@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Clock, Star } from 'lucide-react'
+import { Star } from 'lucide-react'
 import Badge from '@/components/ui/Badge'
 import { cn, formatDate, categoryLabel } from '@/lib/utils'
 import type { Article } from '@/types'
@@ -68,9 +68,6 @@ export default function ArticleCard({ article, variant = 'default' }: Props) {
             <Badge variant={categoryVariant[article.category] ?? 'gray'}>
               {categoryLabel(article.category)}
             </Badge>
-            <span className="flex items-center gap-1 text-xs text-gray-500">
-              <Clock className="w-3 h-3" />{article.readingTimeMinutes} min read
-            </span>
           </div>
           <h3 className="font-bold text-gray-900 text-lg leading-snug mb-2 group-hover:text-navy-600 transition-colors">
             <Link href={`/blog/${article.slug}`}>{article.title}</Link>
@@ -112,9 +109,6 @@ export default function ArticleCard({ article, variant = 'default' }: Props) {
           <p className="text-xs font-medium text-gray-800">{article.author.name}</p>
           <p className="text-xs text-gray-500">{formatDate(article.publishDate)}</p>
         </div>
-        <span className="flex items-center gap-1 text-xs text-gray-400">
-          <Clock className="w-3 h-3" />{article.readingTimeMinutes} min
-        </span>
       </div>
     </div>
   )

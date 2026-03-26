@@ -193,9 +193,19 @@ export default function ArticlePage({ params }: Props) {
             </div>
           </header>
 
-          {/* Hero image placeholder */}
-          <div className="h-64 bg-gradient-to-br from-navy-600 to-navy-900 rounded-2xl mb-8 flex items-center justify-center">
-            <span className="text-white text-4xl font-bold opacity-10">PN</span>
+          {/* Hero image */}
+          <div className="h-64 rounded-2xl mb-8 overflow-hidden">
+            {article.heroImageUrl ? (
+              <img
+                src={article.heroImageUrl}
+                alt={article.heroImageAlt ?? article.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-navy-600 to-navy-900 flex items-center justify-center">
+                <span className="text-white text-4xl font-bold opacity-10">SC</span>
+              </div>
+            )}
           </div>
 
           {/* Article body */}
