@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle, XCircle, ExternalLink, Star, Shield, Plane, DollarSign, AlertCircle, Award } from 'lucide-react'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
@@ -125,8 +124,11 @@ export default async function CardDetailPage({ params }: Props) {
                 </div>
                 <h1 className="text-2xl font-bold text-gray-900 leading-tight">{card.name}</h1>
                 <p className="text-gray-500 mt-1">{card.issuer} · {card.pointsProgram ?? card.rewardsType.replace(/-/g, ' ')}</p>
+                {card.shortDescription && (
+                  <p className="text-sm text-gray-600 mt-2 leading-snug">{card.shortDescription}</p>
+                )}
                 {card.creditScoreMin && (
-                  <p className="text-xs text-gray-400 mt-1">Credit score: {creditScoreLabel(card.creditScoreMin)}</p>
+                  <p className="text-xs text-gray-400 mt-1.5">Credit score: {creditScoreLabel(card.creditScoreMin)}</p>
                 )}
               </div>
             </div>

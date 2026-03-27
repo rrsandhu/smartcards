@@ -80,6 +80,7 @@ export interface CreditCard {
   tags: string[]
   categories: CardCategory[]
   lastUpdated: string                  // ISO date string
+  shortDescription?: string            // one-sentence card summary from API
   transferPartners?: string[]          // e.g. ["Aeroplan", "British Airways"]
   creditScoreMin?: string              // e.g. "good", "excellent"
   allOffers?: Array<{                  // all current offers from detail endpoint

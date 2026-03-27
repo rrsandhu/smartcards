@@ -197,6 +197,7 @@ export function adaptCard(api: ApiCard): CreditCard {
     categories:                toCategories(api),
     lastUpdated:               new Date().toISOString().split('T')[0],
     incomeRequirementPersonal: api.min_income ?? undefined,
+    shortDescription:          api.short_description ?? undefined,
     transferPartners:          api.transfer_partners ?? undefined,
     creditScoreMin:            api.credit_score_min ?? undefined,
     allOffers:                 api.current_offers?.map(o => ({
