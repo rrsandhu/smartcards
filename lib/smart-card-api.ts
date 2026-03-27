@@ -101,13 +101,29 @@ function toRewardsType(type: string): RewardsType {
 
 function toCategories(card: ApiCard): CardCategory[] {
   const cats: CardCategory[] = []
+  const tags = card.tags ?? []
+
+  // No annual fee — trust API fee value (fixed upstream)
   if (card.annual_fee === 0) cats.push('no-fee')
-  if (card.tier === 'premium' || card.tier === 'super-premium') cats.push('premium')
-  if (card.rewards_type === 'cashback') cats.push('cash-back')
-  if (card.tags?.includes('travel') || card.tags?.includes('aeroplan') || card.tags?.includes('westjet')) cats.push('travel')
-  if (card.tags?.includes('business')) cats.push('business')
-  if (card.tags?.includes('student')) cats.push('student')
-  if (card.rewards_type === 'points' && !cats.includes('travel')) cats.push('points')
+
+  // Premium — tier-based OR premium tag (catches mid-tier premium cards like Amex Gold, Cobalt)
+  if (card.tier === 'premium' || card.tier === 'super-premium' || tags.includes('premium')) cats.push('premium')
+
+  // Cash back — rewards_type OR cashback tag (API marks many cash-back cards as rewards_type:'points')
+  if (card.rewards_type === 'cashback' || tags.includes('cashback')) cats.push('cash-back')
+
+  // Travel — travel, airline, or hotel tag
+  if (tags.includes('travel') || tags.includes('airline') || tags.includes('hotel')) cats.push('travel')
+
+  // Business
+  if (tags.includes('business')) cats.push('business')
+
+  // Student
+  if (tags.includes('student')) cats.push('student')
+
+  // Points — points-earning cards not already in cash-back
+  if (card.rewards_type === 'points' && !cats.includes('cash-back') && !cats.includes('travel')) cats.push('points')
+
   if (cats.length === 0) cats.push('points')
   return cats
 }
