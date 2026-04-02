@@ -21,7 +21,7 @@ export default function HeroSection() {
         </span>
 
         {/* Headline */}
-        <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.15] tracking-tight mb-4 max-w-2xl">
+        <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.15] tracking-tight mb-4 max-w-2xl text-white">
           Find the right card{' '}
           <span className="text-teal-400">for you</span>
         </h1>

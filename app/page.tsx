@@ -29,7 +29,7 @@ const categories = [
 
 function OfferBadge({ offer }: { offer: CardOffer }) {
   return (
-    <div className="card-surface overflow-hidden flex flex-col">
+    <div className="card-surface overflow-hidden flex flex-col h-[26rem]">
       {/* Card image header */}
       <div className="h-44 bg-gradient-to-br from-navy-600 to-navy-900 relative flex items-center justify-center">
         {offer.imageUrl ? (
@@ -52,7 +52,7 @@ function OfferBadge({ offer }: { offer: CardOffer }) {
         <div>
           <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-0.5">{offer.cardName}</h3>
           <p className="text-xs text-gray-500 mb-2">{offer.issuer}</p>
-          <p className="text-sm text-gray-700 leading-snug">{offer.headline}</p>
+          <p className="text-sm text-gray-700 leading-snug line-clamp-3">{offer.headline}</p>
           {offer.spendRequirement && (
             <p className="text-xs text-gray-500 mt-1.5">Spend: {offer.spendRequirement}</p>
           )}
