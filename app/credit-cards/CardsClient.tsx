@@ -30,10 +30,11 @@ const sortOptions = [
 interface Props {
   cards: CreditCard[]
   issuers: ApiIssuer[]
+  initialCategory?: string
 }
 
-export default function CardsClient({ cards, issuers }: Props) {
-  const [activeCategory, setActiveCategory] = useState<string>('all')
+export default function CardsClient({ cards, issuers, initialCategory = 'all' }: Props) {
+  const [activeCategory, setActiveCategory] = useState<string>(initialCategory)
   const [activeIssuer, setActiveIssuer]     = useState<string>('all')
   const [sortBy, setSortBy]                 = useState('featured')
   const [viewMode, setViewMode]             = useState<'grid' | 'list'>('list')

@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Search, TrendingUp, CreditCard, Star, ArrowRight, Zap, Home, BookOpen } from 'lucide-react'
+import { TrendingUp, CreditCard, Star, ArrowRight, Zap, Home, BookOpen } from 'lucide-react'
 import ArticleCard from '@/components/blog/ArticleCard'
 import ToolCard from '@/components/tools/ToolCard'
 import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import SectionHeader from '@/components/ui/SectionHeader'
 import DisclaimerBlock from '@/components/shared/DisclaimerBlock'
+import HeroSection from '@/components/home/HeroSection'
 import { getFeaturedArticles } from '@/data/articles'
 import { getFeaturedOffers } from '@/data/offers'
 import { getFeaturedTools } from '@/data/tools'
@@ -87,55 +88,7 @@ export default async function HomePage() {
   return (
     <div>
       {/* ─── Hero ─────────────────────────────────────────────────────────────── */}
-      <section className="bg-navy-600 text-white">
-        <div className="container-site py-16 md:py-24">
-          <div className="max-w-3xl">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-widest uppercase text-gold-300 mb-4">
-              🇨🇦 Built for Canadians
-            </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              Canada's trusted guide to{' '}
-              <span className="text-gold-400">credit cards, points & mortgages</span>
-            </h1>
-            <p className="text-xl text-navy-200 mb-8 leading-relaxed">
-              Explore Canada's best credit card offers, discover the latest points deals, and use our free financial calculators — all in one clean, unbiased place.
-            </p>
-
-            {/* Hero search */}
-            <form
-              action="/search"
-              method="get"
-              className="flex gap-3 max-w-xl"
-            >
-              <div className="relative flex-1">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  name="q"
-                  type="search"
-                  placeholder="Search cards, deals, tools..."
-                  className="w-full pl-10 pr-4 py-3.5 rounded-xl border-0 text-gray-900 focus:outline-none focus:ring-2 focus:ring-gold-400 text-sm"
-                />
-              </div>
-              <button type="submit" className="px-6 py-3.5 bg-gold-500 text-white font-semibold rounded-xl hover:bg-gold-600 transition-colors text-sm">
-                Search
-              </button>
-            </form>
-
-            {/* Quick links */}
-            <div className="flex flex-wrap gap-2 mt-5">
-              {['Best no-fee cards', 'Aeroplan cards', 'Cash back cards', 'Mortgage calculator'].map(q => (
-                <Link
-                  key={q}
-                  href={`/search?q=${encodeURIComponent(q)}`}
-                  className="text-xs bg-navy-500 hover:bg-navy-400 text-navy-100 px-3 py-1.5 rounded-full transition-colors"
-                >
-                  {q}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* ─── Category quick-nav ────────────────────────────────────────────────── */}
       <section className="container-site py-10">

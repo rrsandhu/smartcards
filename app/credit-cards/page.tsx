@@ -3,19 +3,26 @@ import DisclaimerBlock from '@/components/shared/DisclaimerBlock'
 import { fetchCards, fetchIssuers } from '@/lib/smart-card-api'
 import CardsClient from './CardsClient'
 
-export const revalidate = 3600
+// dynamic so ?category= param is read server-side
+export const dynamic = 'force-dynamic'
 
-export default async function CreditCardsPage() {
+interface PageProps {
+  searchParams: { category?: string }
+}
+
+export default async function CreditCardsPage({ searchParams }: PageProps) {
   const [allCards, issuers] = await Promise.all([
     fetchCards({ limit: 100 }),
     fetchIssuers(),
   ])
 
+  const initialCategory = searchParams?.category ?? 'all'
+
   return (
     <div className="container-site py-8">
       <Breadcrumbs crumbs={[{ label: 'Credit Cards' }]} />
       <DisclaimerBlock />
-      <CardsClient cards={allCards} issuers={issuers} />
+      <CardsClient cards={allCards} issuers={issuers} initialCategory={initialCategory} />
 
       {/* SEO copy */}
       <div className="mt-14 max-w-3xl">
