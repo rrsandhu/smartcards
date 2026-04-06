@@ -85,8 +85,23 @@ export default async function HomePage() {
   const featuredOffers   = apiOffers.length > 0 ? apiOffers.slice(0, 8) : getFeaturedOffers().slice(0, 8)
   const featuredTools    = getFeaturedTools()
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'SmartCardOffers',
+    url: 'https://smartcardoffers.ca',
+    description: "Canada's trusted guide to credit cards, points programs, and mortgage tools.",
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: 'https://smartcardoffers.ca/search?q={search_term_string}' },
+      'query-input': 'required name=search_term_string',
+    },
+  }
+
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
       {/* ─── Hero ─────────────────────────────────────────────────────────────── */}
       <HeroSection />
 

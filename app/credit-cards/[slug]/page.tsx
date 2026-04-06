@@ -32,8 +32,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const card = await getCard(params.slug)
   if (!card) return { title: 'Card Not Found' }
   return {
-    title: `${card.name} Review — ${formatAnnualFee(card.annualFee)} Annual Fee`,
-    description: `${card.name} review: ${card.bonusSummary ?? card.welcomeBonus ?? ''}. Annual fee: ${formatAnnualFee(card.annualFee)}.`,
+    title: `${card.name} Review ${new Date().getFullYear()} — ${formatAnnualFee(card.annualFee)} Annual Fee`,
+    description: card.shortDescription
+      ?? `${card.name} review: ${card.bonusSummary ?? card.welcomeBonus ?? ''}. Annual fee: ${formatAnnualFee(card.annualFee)}. Compare and apply today.`,
+    alternates: { canonical: `https://smartcardoffers.ca/credit-cards/${card.slug}` },
+    openGraph: {
+      title: `${card.name} Review ${new Date().getFullYear()}`,
+      description: card.shortDescription ?? `${card.name} — ${formatAnnualFee(card.annualFee)} annual fee.`,
+      type: 'article',
+      url: `https://smartcardoffers.ca/credit-cards/${card.slug}`,
+      images: card.imageUrl ? [{ url: card.imageUrl, alt: card.name }] : [],
+    },
   }
 }
 
@@ -96,8 +105,31 @@ export default async function CardDetailPage({ params }: Props) {
 
   const maxEarnRate = card.earnRates.length > 0 ? Math.max(...card.earnRates.map(r => r.rate)) : 0
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: card.name,
+    description: card.shortDescription ?? card.bonusSummary,
+    brand: { '@type': 'Brand', name: card.issuer },
+    image: card.imageUrl,
+    url: `https://smartcardoffers.ca/credit-cards/${card.slug}`,
+    offers: card.affiliateLink ? {
+      '@type': 'Offer',
+      url: card.affiliateLink,
+      priceCurrency: 'CAD',
+      price: card.annualFee,
+      availability: 'https://schema.org/InStock',
+    } : undefined,
+    review: {
+      '@type': 'Review',
+      reviewBody: card.shortDescription,
+      author: { '@type': 'Organization', name: 'SmartCardOffers' },
+    },
+  }
+
   return (
     <div className="container-site py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Breadcrumbs crumbs={[
         { label: 'Credit Cards', href: '/credit-cards' },
         { label: card.name },

@@ -131,6 +131,24 @@ export default async function ArticlePage({ params }: Props) {
   const article = getArticleBySlug(params.slug)
   if (!article) notFound()
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: article.metaDescription ?? article.excerpt,
+    datePublished: article.publishDate,
+    dateModified: article.updatedDate ?? article.publishDate,
+    author: { '@type': 'Person', name: article.author.name },
+    publisher: {
+      '@type': 'Organization',
+      name: 'SmartCardOffers',
+      url: 'https://smartcardoffers.ca',
+    },
+    image: article.heroImageUrl,
+    url: `https://smartcardoffers.ca/blog/${article.slug}`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://smartcardoffers.ca/blog/${article.slug}` },
+  }
+
   const relatedArticles = article.relatedArticleIds
     ? getRelatedArticles(article.relatedArticleIds)
     : []
@@ -150,6 +168,7 @@ export default async function ArticlePage({ params }: Props) {
 
   return (
     <div className="container-site py-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Breadcrumbs crumbs={[
         { label: 'Blog', href: '/blog' },
         { label: categoryLabel(article.category), href: `/blog/${article.category}` },

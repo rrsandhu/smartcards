@@ -12,40 +12,66 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: 'SmartCardOffers — Canadian Credit Cards, Points Deals & Mortgage Tools',
+    default: 'SmartCardOffers — Best Canadian Credit Cards, Points & Mortgage Tools',
     template: '%s | SmartCardOffers',
   },
   description:
-    'Compare the best Canadian credit cards, discover points deals, and use free mortgage calculators. Your trusted source for Canadian personal finance.',
+    'Compare the best Canadian credit cards, discover points deals, and use free mortgage calculators. Expert reviews and unbiased comparisons for Canadians.',
   keywords: [
     'Canadian credit cards',
     'best credit cards Canada',
-    'Aeroplan points',
-    'cash back credit cards',
+    'Aeroplan credit card',
+    'cash back credit cards Canada',
+    'no fee credit card Canada',
+    'travel rewards Canada',
     'mortgage calculator Canada',
-    'credit card rewards',
-    'points deals Canada',
+    'Scene+ credit card',
+    'credit card comparison Canada',
+    'best welcome bonus credit card',
   ],
   authors: [{ name: 'SmartCardOffers Editorial Team' }],
   creator: 'SmartCardOffers',
+  publisher: 'SmartCardOffers',
   metadataBase: new URL('https://smartcardoffers.ca'),
+  alternates: {
+    canonical: 'https://smartcardoffers.ca',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_CA',
     url: 'https://smartcardoffers.ca',
     siteName: 'SmartCardOffers',
-    title: 'SmartCardOffers — Canadian Credit Cards, Points Deals & Mortgage Tools',
+    title: 'SmartCardOffers — Best Canadian Credit Cards, Points & Mortgage Tools',
     description:
-      'Compare the best Canadian credit cards, discover points deals, and use free mortgage calculators.',
+      'Compare the best Canadian credit cards, discover points deals, and use free mortgage calculators. Expert reviews for Canadians.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'SmartCardOffers — Canadian Credit Cards & Points',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SmartCardOffers — Canadian Credit Cards & Points',
-    description: 'Your trusted source for Canadian personal finance, credit cards, and mortgage tools.',
+    title: 'SmartCardOffers — Best Canadian Credit Cards & Points',
+    description: 'Compare Canadian credit cards, find the best welcome bonuses, and use free financial tools.',
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: '',   // Add Google Search Console verification code here when available
   },
 }
 
