@@ -318,7 +318,13 @@ export async function fetchOffers(params?: {
     const res = await fetch(`${API}/api/offers?${qs}`, { next: { revalidate: 3600 } })
     if (!res.ok) return []
     const { offers } = await res.json()
-    return (offers as ApiOffer[]).map(adaptOffer)
+    const PLACEHOLDER = ['no bonus offer', 'new offer', 'please fill in']
+    return (offers as ApiOffer[])
+      .filter(o => {
+        const h = (o.headline ?? '').trim().toLowerCase()
+        return h.length > 0 && !PLACEHOLDER.some(p => h.includes(p))
+      })
+      .map(adaptOffer)
   } catch {
     return []
   }
