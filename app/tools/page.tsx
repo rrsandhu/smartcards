@@ -5,8 +5,10 @@ import SectionHeader from '@/components/ui/SectionHeader'
 import { tools, getToolsByCategory } from '@/data/tools'
 
 export const metadata: Metadata = {
-  title: 'Free Canadian Financial Calculators & Tools',
-  description: 'Free mortgage calculators, credit card rewards estimators, and debt payoff tools built for Canadians. Calculate your mortgage payment, rewards value, and more.',
+  title: 'Free Canadian Financial Calculators — Mortgage, Rewards & Debt Tools',
+  description: 'Free mortgage calculators, credit card rewards estimators, and debt payoff tools built for Canadians. No signup required.',
+  alternates: { canonical: 'https://smartcardoffers.ca/tools' },
+  openGraph: { title: 'Free Canadian Financial Calculators 2026', description: 'Mortgage payment, affordability, rewards value, and debt payoff calculators for Canadians.', url: 'https://smartcardoffers.ca/tools', type: 'website' },
 }
 
 const categoryGroups = [

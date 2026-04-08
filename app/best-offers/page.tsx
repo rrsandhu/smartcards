@@ -11,8 +11,10 @@ import { offers as localOffers } from '@/data/offers'
 import { formatDate } from '@/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'Best Credit Card Offers in Canada Right Now',
-  description: 'Browse the best Canadian credit card welcome bonuses and limited-time offers available today. Updated regularly.',
+  title: 'Best Credit Card Offers in Canada Right Now — April 2026',
+  description: 'The best Canadian credit card welcome bonuses and limited-time offers available right now. Compare 50+ cards and apply today.',
+  alternates: { canonical: 'https://smartcardoffers.ca/best-offers' },
+  openGraph: { title: 'Best Canadian Credit Card Offers — April 2026', description: 'Top welcome bonuses and limited-time credit card promotions for Canadians.', url: 'https://smartcardoffers.ca/best-offers', type: 'website' },
 }
 
 export const revalidate = 3600 // refresh every hour

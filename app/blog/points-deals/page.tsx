@@ -7,8 +7,10 @@ import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import { getArticlesByCategory } from '@/data/articles'
 
 export const metadata: Metadata = {
-  title: 'Points Deals — Best Canadian Loyalty Points Promotions',
-  description: 'Track the best Canadian points deals, transfer bonuses, and limited-time loyalty program promotions. Aeroplan, Amex MR, Scene+ and more.',
+  title: 'Points Deals — Best Canadian Loyalty Points Promotions 2026',
+  description: 'Track the best Canadian points deals, transfer bonuses, and limited-time loyalty promotions. Aeroplan, Amex MR, Scene+, RBC Avion and more.',
+  alternates: { canonical: 'https://smartcardoffers.ca/blog/points-deals' },
+  openGraph: { title: 'Best Canadian Points Deals 2026', description: 'Latest Aeroplan, Amex MR, and Scene+ promotions for Canadians.', url: 'https://smartcardoffers.ca/blog/points-deals', type: 'website' },
 }
 
 export default function PointsDealsPage() {

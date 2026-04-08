@@ -7,9 +7,10 @@ import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import { pointsPrograms } from '@/data/points-programs'
 
 export const metadata: Metadata = {
-  title: 'Canadian Points Transfer Guides — Amex, Aeroplan, RBC Avion & More',
-  description:
-    'Learn how to transfer Canadian credit card points to airlines and hotels. Compare Amex MR, Aeroplan, RBC Avion, and Scene+ transfer partners, ratios, and best redemptions.',
+  title: 'Canadian Points Programs Guide 2026 — Aeroplan, Amex MR, Scene+ & More',
+  description: 'Learn how to transfer Canadian credit card points to airlines and hotels. Complete guides to Aeroplan, Amex MR, RBC Avion, and Scene+ programs.',
+  alternates: { canonical: 'https://smartcardoffers.ca/points' },
+  openGraph: { title: 'Canadian Points Transfer Guides 2026', description: 'Maximize your Aeroplan, Amex MR, Scene+, and RBC Avion points with our expert guides.', url: 'https://smartcardoffers.ca/points', type: 'website' },
 }
 
 const typeIcon = {

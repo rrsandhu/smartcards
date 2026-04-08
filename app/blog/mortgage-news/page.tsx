@@ -9,8 +9,10 @@ import { getArticlesByCategory } from '@/data/articles'
 import { getToolsByCategory } from '@/data/tools'
 
 export const metadata: Metadata = {
-  title: 'Mortgage News Canada — Rate Updates, Renewal Tips & Housing Market',
-  description: 'Stay current on Canadian mortgage rates, Bank of Canada rate decisions, housing market news, and expert mortgage advice from SmartCardOffers.',
+  title: 'Canadian Mortgage News 2026 — Rates, Renewals & Housing Market',
+  description: 'Stay current on Canadian mortgage rates, Bank of Canada decisions, housing market analysis, and renewal strategies from SmartCardOffers.',
+  alternates: { canonical: 'https://smartcardoffers.ca/blog/mortgage-news' },
+  openGraph: { title: 'Canadian Mortgage News 2026', description: 'Bank of Canada rate updates, renewal tips, and housing market analysis for Canadians.', url: 'https://smartcardoffers.ca/blog/mortgage-news', type: 'website' },
 }
 
 export default function MortgageNewsPage() {

@@ -25,16 +25,29 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = getArticleBySlug(params.slug)
   if (!article) return {}
+  const desc = article.metaDescription ?? article.excerpt
+  const imageUrl = article.heroImageUrl ?? 'https://smartcardoffers.ca/og-image.png'
   return {
     title: article.title,
-    description: article.metaDescription ?? article.excerpt,
+    description: desc,
+    alternates: { canonical: `https://smartcardoffers.ca/blog/${article.slug}` },
+    authors: [{ name: article.author.name }],
     openGraph: {
       title: article.title,
-      description: article.metaDescription ?? article.excerpt,
+      description: desc,
       type: 'article',
+      url: `https://smartcardoffers.ca/blog/${article.slug}`,
       publishedTime: article.publishDate,
-      modifiedTime: article.updatedDate,
+      modifiedTime: article.updatedDate ?? article.publishDate,
       authors: [article.author.name],
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: article.title }],
+      siteName: 'SmartCardOffers',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: desc,
+      images: [imageUrl],
     },
   }
 }
@@ -218,12 +231,15 @@ export default async function ArticlePage({ params }: Props) {
           </header>
 
           {/* Hero image */}
-          <div className="h-64 rounded-2xl mb-8 overflow-hidden">
+          <div className="h-52 sm:h-72 rounded-2xl mb-8 overflow-hidden">
             {article.heroImageUrl ? (
               <img
                 src={article.heroImageUrl}
                 alt={article.heroImageAlt ?? article.title}
                 className="w-full h-full object-cover"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-navy-600 to-navy-900 flex items-center justify-center">
@@ -271,7 +287,7 @@ export default async function ArticlePage({ params }: Props) {
         <aside className="space-y-6">
           {/* Table of contents */}
           {toc.length > 0 && (
-            <div className="card-surface p-5 sticky top-20">
+            <div className="card-surface p-5 lg:sticky lg:top-20">
               <h3 className="font-semibold text-gray-900 text-sm mb-3">In This Article</h3>
               <nav className="space-y-1.5">
                 {toc.map((heading, i) => (

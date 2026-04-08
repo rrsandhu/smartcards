@@ -7,8 +7,10 @@ import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import { getArticlesByCategory } from '@/data/articles'
 
 export const metadata: Metadata = {
-  title: 'Guides — Canadian Points, Credit Cards & Personal Finance | SmartCardOffers',
-  description: 'In-depth guides to Canadian credit card points, Aeroplan strategy, travel rewards, and personal finance decisions — written by the SmartCardOffers editorial team.',
+  title: 'Credit Card & Points Guides for Canadians 2026 | SmartCardOffers',
+  description: 'In-depth guides to Canadian credit card points, Aeroplan strategy, travel rewards, cash back, and personal finance — written for Canadians.',
+  alternates: { canonical: 'https://smartcardoffers.ca/blog/guides' },
+  openGraph: { title: 'Canadian Credit Card & Points Guides 2026', description: 'Comprehensive, evergreen guides for Canadian credit card and points strategy.', url: 'https://smartcardoffers.ca/blog/guides', type: 'website' },
 }
 
 export default function GuidesPage() {

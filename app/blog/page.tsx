@@ -8,8 +8,15 @@ import { articles } from '@/data/articles'
 import { categoryLabel } from '@/lib/utils'
 
 export const metadata: Metadata = {
-  title: 'Blog — Points Deals, Credit Card News & Guides | SmartCardOffers',
-  description: 'Expert Canadian personal finance content. Points deals, credit card offers, mortgage news, and guides from the SmartCardOffers editorial team.',
+  title: 'Blog — Canadian Credit Card Guides, Points Deals & Mortgage News',
+  description: 'Expert Canadian personal finance content. Credit card guides, points deals, mortgage news, and in-depth reviews from the SmartCardOffers editorial team.',
+  alternates: { canonical: 'https://smartcardoffers.ca/blog' },
+  openGraph: {
+    title: 'SmartCardOffers Blog — Canadian Credit Cards & Finance',
+    description: 'In-depth guides, points deals, and mortgage news for Canadians.',
+    url: 'https://smartcardoffers.ca/blog',
+    type: 'website',
+  },
 }
 
 const categoryLinks = [

@@ -7,8 +7,10 @@ import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import { getArticlesByCategory } from '@/data/articles'
 
 export const metadata: Metadata = {
-  title: 'Credit Card Deals — Best Canadian Welcome Bonuses & Promotions',
-  description: 'Browse the best Canadian credit card deals, welcome bonuses, and limited-time offers. Updated regularly by the SmartCardOffers editorial team.',
+  title: 'Best Canadian Credit Card Deals & Welcome Bonuses 2026',
+  description: 'Browse the best Canadian credit card deals, welcome bonuses, and limited-time offers. Updated regularly — never miss a promotion.',
+  alternates: { canonical: 'https://smartcardoffers.ca/blog/credit-card-deals' },
+  openGraph: { title: 'Best Canadian Credit Card Deals 2026', description: 'Top welcome bonuses and limited-time credit card offers for Canadians.', url: 'https://smartcardoffers.ca/blog/credit-card-deals', type: 'website' },
 }
 
 export default function CreditCardDealsPage() {

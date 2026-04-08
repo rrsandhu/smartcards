@@ -4,8 +4,10 @@ import { Shield, Users, TrendingUp, Heart } from 'lucide-react'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 
 export const metadata: Metadata = {
-  title: 'About SmartCardOffers — Canadian Personal Finance Editorial Team',
-  description: 'SmartCardOffers is a trusted Canadian personal finance website covering credit cards, points programs, and mortgage news for Canadians.',
+  title: 'About SmartCardOffers — Independent Canadian Credit Card Reviews',
+  description: 'SmartCardOffers is an independent Canadian personal finance website. We provide unbiased credit card reviews, points guides, and mortgage tools for Canadians.',
+  alternates: { canonical: 'https://smartcardoffers.ca/about' },
+  openGraph: { title: 'About SmartCardOffers', description: 'Independent, unbiased Canadian credit card reviews and personal finance content.', url: 'https://smartcardoffers.ca/about', type: 'website' },
 }
 
 const values = [
