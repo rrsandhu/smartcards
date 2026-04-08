@@ -83,7 +83,7 @@ export default async function HomePage() {
 
   const featuredArticles = getFeaturedArticles()
   const featuredOffers   = apiOffers.length > 0 ? apiOffers.slice(0, 8) : getFeaturedOffers().slice(0, 8)
-  const featuredTools    = getFeaturedTools()
+  const featuredTools    = getFeaturedTools().slice(0, 4)
 
   const jsonLd = {
     '@context': 'https://schema.org',
