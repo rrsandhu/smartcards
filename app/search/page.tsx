@@ -3,7 +3,10 @@ import Link from 'next/link'
 import { Search, CreditCard, FileText, Calculator } from 'lucide-react'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import { search } from '@/lib/search'
+import { fetchCards } from '@/lib/smart-card-api'
 import type { SearchResultType } from '@/types'
+
+export const dynamic = 'force-dynamic'
 
 interface Props {
   searchParams: { q?: string }
@@ -39,9 +42,10 @@ const typeColor: Record<SearchResultType, string> = {
 
 const popularSearches = ['Best welcome bonus', 'No annual fee', 'Aeroplan', 'Cash back', 'Mortgage calculator', 'No FX fee']
 
-export default function SearchPage({ searchParams }: Props) {
+export default async function SearchPage({ searchParams }: Props) {
   const query = searchParams.q ?? ''
-  const results = search(query)
+  const liveCards = query.trim().length >= 2 ? await fetchCards({ limit: 100 }) : []
+  const results = search(query, liveCards)
 
   return (
     <div className="container-site py-8">
