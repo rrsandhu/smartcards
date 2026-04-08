@@ -317,9 +317,33 @@ export async function fetchOffers(params?: {
 
     const res = await fetch(`${API}/api/offers?${qs}`, { next: { revalidate: 3600 } })
     if (!res.ok) return []
-    const { offers } = await res.json()
+    const data = await res.json()
+
+    // Normalise: API may return { offers: [...] } or { cards: [...] } with embedded additional_offers
+    let rawOffers: ApiOffer[] = []
+    if (Array.isArray(data.offers)) {
+      rawOffers = data.offers as ApiOffer[]
+    } else if (Array.isArray(data.cards)) {
+      for (const card of data.cards as ApiCard[]) {
+        const embedded = (card as any).additional_offers ?? card.current_offers ?? []
+        for (const o of embedded as ApiOffer[]) {
+          rawOffers.push({
+            ...o,
+            card: {
+              id:          card.id,
+              name:        card.name,
+              slug:        card.slug,
+              image_url:   card.image_url,
+              referral_url: card.referral_url ?? null,
+              issuer:      card.issuer,
+            },
+          })
+        }
+      }
+    }
+
     const PLACEHOLDER = ['no bonus offer', 'new offer', 'please fill in']
-    return (offers as ApiOffer[])
+    return rawOffers
       .filter(o => {
         const h = (o.headline ?? '').trim().toLowerCase()
         return h.length > 0 && !PLACEHOLDER.some(p => h.includes(p))
