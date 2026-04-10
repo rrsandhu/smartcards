@@ -32,6 +32,13 @@ interface ApiOffer {
   confidence_score: number
   source_url?: string
   last_seen_at?: string
+  // Monthly bonus fields (null when is_monthly_bonus = false)
+  is_monthly_bonus?: boolean
+  monthly_points_value?: number | null
+  monthly_spend_requirement?: number | null
+  monthly_cashback_value?: number | null
+  bonus_months?: number | null
+  start_month?: number | null
   card?: {
     id?: string
     name: string
@@ -173,13 +180,19 @@ export function adaptCard(api: ApiCard): CreditCard {
   const cashback = offer?.cashback_value ? parseFloat(offer.cashback_value) : null
 
   const welcomeBonus = offer?.headline ?? undefined
-  const bonusSummary = offer
-    ? offer.points_value
-      ? `Earn ${offer.points_value.toLocaleString()} ${api.rewards_program ?? 'points'}`
-      : cashback
-        ? `${cashback}% cash back welcome offer`
-        : offer.headline
-    : undefined
+  let bonusSummary: string | undefined
+  if (offer) {
+    if (offer.is_monthly_bonus && offer.monthly_points_value && offer.bonus_months) {
+      const total = offer.monthly_points_value * offer.bonus_months
+      bonusSummary = `Earn ${offer.monthly_points_value.toLocaleString()} ${api.rewards_program ?? 'points'}/month for ${offer.bonus_months} months (${total.toLocaleString()} total)`
+    } else if (offer.points_value) {
+      bonusSummary = `Earn ${offer.points_value.toLocaleString()} ${api.rewards_program ?? 'points'}`
+    } else if (cashback) {
+      bonusSummary = `${cashback}% cash back welcome offer`
+    } else {
+      bonusSummary = offer.headline
+    }
+  }
 
   // Only set affiliateLink/applyUrl when a real URL exists
   const applyLink = api.referral_url ?? api.apply_url ?? undefined
@@ -217,16 +230,20 @@ export function adaptCard(api: ApiCard): CreditCard {
     transferPartners:          api.transfer_partners ?? undefined,
     creditScoreMin:            api.credit_score_min ?? undefined,
     allOffers:                 api.current_offers?.map(o => ({
-      id:                o.id,
-      headline:          o.headline,
-      pointsValue:       o.points_value ?? undefined,
-      cashbackValue:     o.cashback_value ? parseFloat(o.cashback_value) : undefined,
-      spendRequirement:  o.spend_requirement ?? undefined,
-      spendTimeframeDays:o.spend_timeframe_days ?? undefined,
-      isLimitedTime:     o.is_limited_time,
-      expiresAt:         o.expires_at ?? undefined,
-      isVerified:        o.is_verified,
-      confidenceScore:   o.confidence_score,
+      id:                      o.id,
+      headline:                o.headline,
+      pointsValue:             o.points_value ?? undefined,
+      cashbackValue:           o.cashback_value ? parseFloat(o.cashback_value) : undefined,
+      spendRequirement:        o.spend_requirement ?? undefined,
+      spendTimeframeDays:      o.spend_timeframe_days ?? undefined,
+      isLimitedTime:           o.is_limited_time,
+      expiresAt:               o.expires_at ?? undefined,
+      isVerified:              o.is_verified,
+      confidenceScore:         o.confidence_score,
+      isMonthlyBonus:          o.is_monthly_bonus ?? false,
+      monthlyPointsValue:      o.monthly_points_value ?? undefined,
+      monthlySpendRequirement: o.monthly_spend_requirement ?? undefined,
+      bonusMonths:             o.bonus_months ?? undefined,
     })) ?? undefined,
   }
 }
@@ -238,6 +255,15 @@ export function adaptOffer(api: ApiOffer): CardOffer {
   // Safe expires_at parsing (treat as end-of-day to avoid UTC offset issues)
   const offerExpiry = api.expires_at ? api.expires_at : undefined
 
+  // For monthly bonuses, compute the total and build a clear headline
+  let headline = api.headline
+  let bonusAmount = api.points_value ?? cashback ?? undefined
+  if (api.is_monthly_bonus && api.monthly_points_value && api.bonus_months) {
+    const total = api.monthly_points_value * api.bonus_months
+    headline = `Earn ${api.monthly_points_value.toLocaleString()} pts/month for ${api.bonus_months} months (${total.toLocaleString()} total)`
+    bonusAmount = total
+  }
+
   return {
     id:                api.id,
     cardId:            card?.slug ?? api.card_id ?? '',
@@ -245,8 +271,8 @@ export function adaptOffer(api: ApiOffer): CardOffer {
     cardName:          card?.name ?? 'Unknown Card',
     issuer:            card?.issuer?.name ?? '',
     offerType:         api.is_limited_time ? 'limited-time' : 'welcome-bonus',
-    headline:          api.headline,
-    bonusAmount:       api.points_value ?? cashback ?? undefined,
+    headline,
+    bonusAmount,
     bonusUnit:         api.points_value ? 'points' : cashback ? 'percent' : undefined,
     spendRequirement:  api.spend_requirement
       ? `$${api.spend_requirement.toLocaleString()}${api.spend_timeframe_days ? ` in ${Math.round(api.spend_timeframe_days / 30)} months` : ''}`
