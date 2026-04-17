@@ -28,6 +28,10 @@ const categories = [
 ]
 
 function OfferBadge({ offer }: { offer: CardOffer }) {
+  // Only treat as a valid apply link if it's a real external URL
+  const applyLink = offer.affiliateLink?.startsWith('http') ? offer.affiliateLink : null
+  const reviewLink = `/credit-cards/${offer.cardSlug}`
+
   return (
     <div className="card-surface overflow-hidden flex flex-col h-[26rem]">
       {/* Card image header */}
@@ -57,20 +61,21 @@ function OfferBadge({ offer }: { offer: CardOffer }) {
             <p className="text-xs text-gray-500 mt-1.5">Spend: {offer.spendRequirement}</p>
           )}
         </div>
-        {offer.affiliateLink ? (
-          <a
-            href={offer.affiliateLink}
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            className="btn-primary text-sm text-center mt-auto"
-          >
-            Apply Now
-          </a>
-        ) : (
-          <Link href={`/credit-cards/${offer.cardSlug}`} className="btn-secondary text-sm text-center mt-auto">
-            View Card
+        <div className="flex flex-col gap-2 mt-auto">
+          {applyLink && (
+            <a
+              href={applyLink}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className="btn-primary text-sm text-center"
+            >
+              Apply Now
+            </a>
+          )}
+          <Link href={reviewLink} className="btn-secondary text-sm text-center">
+            Full Review
           </Link>
-        )}
+        </div>
       </div>
     </div>
   )
