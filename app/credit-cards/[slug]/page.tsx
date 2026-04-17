@@ -75,14 +75,20 @@ export default async function CardDetailPage({ params }: Props) {
   if (!card) {
     return (
       <div className="container-site py-16 text-center">
-        <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Review Not Available</h1>
-        <p className="text-gray-500 mb-6 max-w-md mx-auto">
-          We don't have a full review for this card yet. Check back soon, or browse all reviewed cards below.
+        <AlertCircle className="w-12 h-12 text-amber-400 mx-auto mb-4" />
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Temporarily Unavailable</h1>
+        <p className="text-gray-500 mb-2 max-w-md mx-auto">
+          We&apos;re having trouble loading this card right now. Our data provider is temporarily offline.
         </p>
-        <Link href="/credit-cards" className="btn-primary">
-          Browse All Credit Cards
-        </Link>
+        <p className="text-gray-400 text-sm mb-6">Please try again in a few minutes.</p>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <Link href={`/credit-cards/${params.slug}`} className="btn-primary">
+            Try Again
+          </Link>
+          <Link href="/credit-cards" className="btn-secondary">
+            Browse All Cards
+          </Link>
+        </div>
       </div>
     )
   }
