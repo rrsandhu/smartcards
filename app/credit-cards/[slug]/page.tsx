@@ -7,7 +7,6 @@ import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import Badge from '@/components/ui/Badge'
 import CardImage from '@/components/cards/CardImage'
 import { fetchCard, fetchCards } from '@/lib/smart-card-api'
-import { getCardBySlug, cards as localCards } from '@/data/cards'
 import { formatCAD, formatAnnualFee, formatDate } from '@/lib/utils'
 import type { CreditCard } from '@/types'
 
@@ -19,12 +18,11 @@ export const dynamicParams = true
 export const revalidate = 3600
 
 export async function generateStaticParams() {
-  return localCards.map(c => ({ slug: c.slug }))
+  const cards = await fetchCards({ limit: 100 })
+  return cards.map(c => ({ slug: c.slug }))
 }
 
 async function getCard(slug: string): Promise<CreditCard | null> {
-  const local = getCardBySlug(slug)
-  if (local) return local
   return fetchCard(slug)
 }
 
