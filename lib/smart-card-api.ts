@@ -62,7 +62,7 @@ interface ApiCard {
   earn_rate_base: number | null
   earn_rate_multipliers: Record<string, number> | null
   transfer_partners?: string[] | null
-  lounge_access: boolean
+  lounge_access: boolean | Array<{ lounge_network?: string; visits_per_year?: number; details?: string }>
   travel_insurance: boolean
   purchase_protection: boolean
   foreign_transaction_fee: number | null
@@ -194,8 +194,17 @@ export function adaptCard(api: ApiCard): CreditCard {
     }
   }
 
-  // Only set affiliateLink/applyUrl when a real URL exists
-  const applyLink = api.referral_url ?? api.apply_url ?? undefined
+  // Prefer referral_url; filter out bad apply_url values (e.g. github.com scraper artifacts)
+  const cleanApply = api.apply_url && !api.apply_url.includes('github.com') ? api.apply_url : null
+  const applyLink = api.referral_url ?? cleanApply ?? undefined
+
+  // lounge_access changed from boolean to array of objects in the API
+  const hasLounge = Array.isArray(api.lounge_access)
+    ? api.lounge_access.length > 0
+    : Boolean(api.lounge_access)
+  const loungeLabel = Array.isArray(api.lounge_access) && api.lounge_access.length > 0
+    ? (api.lounge_access[0].lounge_network ?? 'Included')
+    : (hasLounge ? 'Included' : undefined)
 
   return {
     id:                        api.slug,
@@ -213,7 +222,7 @@ export function adaptCard(api: ApiCard): CreditCard {
     perks:                     [],
     insurance:                 { travelMedical: api.travel_insurance, purchaseProtection: api.purchase_protection },
     foreignTransactionFee:     api.foreign_transaction_fee !== null && api.foreign_transaction_fee > 0,
-    loungeAccess:              api.lounge_access ? 'Included' : undefined,
+    loungeAccess:              loungeLabel,
     bestFor:                   api.best_for ?? [],
     pros:                      api.pros ?? [],
     cons:                      api.cons ?? [],
@@ -227,7 +236,11 @@ export function adaptCard(api: ApiCard): CreditCard {
     lastUpdated:               new Date().toISOString().split('T')[0],
     incomeRequirementPersonal: api.min_income ?? undefined,
     shortDescription:          api.short_description ?? undefined,
-    transferPartners:          api.transfer_partners ?? undefined,
+    transferPartners:          api.transfer_partners
+                               ? api.transfer_partners.map((p: any) =>
+                                   typeof p === 'string' ? p : (p.partner_name ?? String(p))
+                                 )
+                               : undefined,
     creditScoreMin:            api.credit_score_min ?? undefined,
     allOffers:                 api.current_offers?.map(o => ({
       id:                      o.id,
