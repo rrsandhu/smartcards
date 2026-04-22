@@ -147,9 +147,9 @@ export default async function HomePage() {
             View all <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
-        {/* Horizontal scroll row — single row, swipe on mobile */}
+        {/* Horizontal scroll on mobile, centered wrap on desktop */}
         <div
-          className="flex gap-5 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+          className="flex gap-5 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap sm:justify-center snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
           style={{ scrollbarWidth: 'none' }}
         >
           {featuredOffers.map(offer => (

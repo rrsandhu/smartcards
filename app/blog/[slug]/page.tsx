@@ -80,9 +80,9 @@ function ArticleContent({ sections }: { sections: ArticleSection[] }) {
       {sections.map((section, i) => {
         switch (section.type) {
           case 'h2':
-            return <h2 key={i}>{section.heading}</h2>
+            return <h2 key={i} id={section.heading!.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}>{section.heading}</h2>
           case 'h3':
-            return <h3 key={i}>{section.heading}</h3>
+            return <h3 key={i} id={section.heading!.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}>{section.heading}</h3>
           case 'paragraph':
             return <p key={i}>{section.body}</p>
           case 'bullets':
@@ -144,6 +144,8 @@ export default async function ArticlePage({ params }: Props) {
   const article = getArticleBySlug(params.slug)
   if (!article) notFound()
 
+  const articleUrl = `https://smartcardoffers.ca/blog/${article.slug}`
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -156,10 +158,42 @@ export default async function ArticlePage({ params }: Props) {
       '@type': 'Organization',
       name: 'SmartCardOffers',
       url: 'https://smartcardoffers.ca',
+      logo: { '@type': 'ImageObject', url: 'https://smartcardoffers.ca/logo.png' },
     },
-    image: article.heroImageUrl,
-    url: `https://smartcardoffers.ca/blog/${article.slug}`,
-    mainEntityOfPage: { '@type': 'WebPage', '@id': `https://smartcardoffers.ca/blog/${article.slug}` },
+    image: { '@type': 'ImageObject', url: article.heroImageUrl ?? 'https://smartcardoffers.ca/og-image.png', width: 1200, height: 630 },
+    url: articleUrl,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': articleUrl },
+    wordCount: article.content.filter(s => s.type === 'paragraph').reduce((n, s) => n + (s.body?.split(' ').length ?? 0), 0),
+  }
+
+  // FAQ schema from h2 headings that are questions
+  const faqItems = article.content
+    .reduce<Array<{q: string; a: string}>>((acc, s, idx, arr) => {
+      if (s.type === 'h2' && s.heading?.includes('?')) {
+        const next = arr.slice(idx + 1).find(n => n.type === 'paragraph')
+        if (next?.body) acc.push({ q: s.heading, a: next.body.substring(0, 250) })
+      }
+      return acc
+    }, [])
+
+  const faqLd = faqItems.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map(f => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  } : null
+
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://smartcardoffers.ca' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://smartcardoffers.ca/blog' },
+      { '@type': 'ListItem', position: 3, name: article.title, item: articleUrl },
+    ],
   }
 
   const relatedArticles = article.relatedArticleIds
@@ -182,6 +216,8 @@ export default async function ArticlePage({ params }: Props) {
   return (
     <div className="container-site py-8">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />}
       <Breadcrumbs crumbs={[
         { label: 'Blog', href: '/blog' },
         { label: categoryLabel(article.category), href: `/blog/${article.category}` },
@@ -290,12 +326,15 @@ export default async function ArticlePage({ params }: Props) {
             <div className="card-surface p-5 lg:sticky lg:top-20">
               <h3 className="font-semibold text-gray-900 text-sm mb-3">In This Article</h3>
               <nav className="space-y-1.5">
-                {toc.map((heading, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm text-gray-600 hover:text-navy-600 transition-colors cursor-pointer py-0.5">
-                    <ChevronRight className="w-3.5 h-3.5 text-gray-400 mt-0.5 flex-shrink-0" />
-                    <span className="leading-snug">{heading}</span>
-                  </div>
-                ))}
+                {toc.map((heading, i) => {
+                  const anchor = heading.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')
+                  return (
+                    <a key={i} href={`#${anchor}`} className="flex items-start gap-2 text-sm text-gray-600 hover:text-navy-600 transition-colors py-0.5">
+                      <ChevronRight className="w-3.5 h-3.5 text-gray-400 mt-0.5 flex-shrink-0" />
+                      <span className="leading-snug">{heading}</span>
+                    </a>
+                  )
+                })}
               </nav>
             </div>
           )}
