@@ -93,13 +93,17 @@ export default async function CardDetailPage({ params }: Props) {
     )
   }
 
-  // Pick best offer: highest confidence, verified preferred
-  const bestOffer = card.allOffers
-    ?.filter(o => o.headline && o.headline.length > 5)
-    .sort((a, b) => (b.isVerified ? 1 : 0) - (a.isVerified ? 1 : 0) || b.confidenceScore - a.confidenceScore)[0]
+  // Pick best offer: prefer welcome_bonus type, then highest confidence/verified
+  const validOffers = card.allOffers?.filter(o => o.headline && o.headline.length > 5) ?? []
+  const bestOffer = validOffers
+    .sort((a, b) =>
+      (b.offerType === 'welcome_bonus' ? 1 : 0) - (a.offerType === 'welcome_bonus' ? 1 : 0) ||
+      (b.isVerified ? 1 : 0) - (a.isVerified ? 1 : 0) ||
+      b.confidenceScore - a.confidenceScore
+    )[0]
 
-  // All other offers to show as alternatives
-  const otherOffers = card.allOffers?.filter(o => o !== bestOffer && o.headline && o.headline.length > 5).slice(0, 3) ?? []
+  // Additional bonus tiers (additional_offer type) shown as a breakdown
+  const otherOffers = validOffers.filter(o => o !== bestOffer).slice(0, 4)
 
   // Related cards from API
   const allApiCards = await fetchCards({ limit: 20 })
@@ -146,8 +150,8 @@ export default async function CardDetailPage({ params }: Props) {
           {/* Hero card summary */}
           <div className="card-surface p-7">
             <div className="flex items-start gap-5 mb-6">
-              <div className="w-28 h-18 flex-shrink-0">
-                <CardImage card={card} className="w-28 h-18" />
+              <div className="w-28 h-20 flex-shrink-0">
+                <CardImage card={card} className="w-28 h-20" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap gap-2 mb-2">
@@ -244,32 +248,48 @@ export default async function CardDetailPage({ params }: Props) {
             </p>
           </div>
 
-          {/* Additional offers */}
+          {/* Additional bonus tiers */}
           {otherOffers.length > 0 && (
             <div className="card-surface p-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Award className="w-5 h-5 text-gold-500" /> Other Available Offers
+              <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
+                <Award className="w-5 h-5 text-gold-500" /> Bonus Tiers Breakdown
               </h2>
-              <div className="space-y-3">
+              <p className="text-xs text-gray-500 mb-4">This card has a multi-tier welcome offer — here&apos;s how to earn the full bonus.</p>
+              <div className="space-y-0">
                 {otherOffers.map((o, i) => (
-                  <div key={o.id} className="flex items-start gap-3 py-3 border-b border-parchment-100 last:border-0">
-                    <div className="w-5 h-5 rounded-full bg-navy-100 text-navy-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <div key={o.id} className="flex items-start gap-3 py-3.5 border-b border-parchment-100 last:border-0">
+                    <div className="w-6 h-6 rounded-full bg-navy-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                       {i + 2}
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm text-gray-800">{o.headline}</p>
-                      {o.spendRequirement && (
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          Spend: ${o.spendRequirement.toLocaleString()}
-                          {o.spendTimeframeDays ? ` in ${Math.round(o.spendTimeframeDays / 30)} months` : ''}
-                        </p>
+                      {o.isMonthlyBonus && o.monthlyPointsValue && o.bonusMonths ? (
+                        <>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {o.monthlyPointsValue.toLocaleString()} {card.pointsProgram ?? 'points'}/month × {o.bonusMonths} months
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            = {(o.monthlyPointsValue * o.bonusMonths).toLocaleString()} points total
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {o.pointsValue ? `${o.pointsValue.toLocaleString()} ${card.pointsProgram ?? 'points'}` : o.headline}
+                          </p>
+                          {o.spendRequirement && (
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              Spend ${o.spendRequirement.toLocaleString()}
+                              {o.spendTimeframeDays ? ` in ${Math.round(o.spendTimeframeDays / 30)} months` : ''}
+                            </p>
+                          )}
+                        </>
                       )}
                       {o.expiresAt && (
                         <p className="text-xs text-red-600 mt-0.5">Expires {formatDate(o.expiresAt)}</p>
                       )}
                     </div>
                     {o.isVerified && (
-                      <span className="text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full flex-shrink-0">Verified</span>
+                      <span className="text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full flex-shrink-0">✓ Verified</span>
                     )}
                   </div>
                 ))}

@@ -85,6 +85,7 @@ export interface CreditCard {
   creditScoreMin?: string              // e.g. "good", "excellent"
   allOffers?: Array<{                  // all current offers from detail endpoint
     id: string
+    offerType?: string               // 'welcome_bonus' | 'additional_offer' | etc.
     headline: string
     pointsValue?: number
     cashbackValue?: number
@@ -94,6 +95,10 @@ export interface CreditCard {
     expiresAt?: string
     isVerified: boolean
     confidenceScore: number
+    isMonthlyBonus: boolean
+    monthlyPointsValue?: number
+    monthlySpendRequirement?: number
+    bonusMonths?: number
   }>
 }
 

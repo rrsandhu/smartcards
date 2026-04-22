@@ -176,7 +176,9 @@ function toEarnRates(card: ApiCard): EarnRate[] {
 }
 
 export function adaptCard(api: ApiCard): CreditCard {
-  const offer = api.current_offers?.[0]
+  // Prefer the welcome_bonus type as the primary offer; fall back to first offer
+  const offers = api.current_offers ?? []
+  const offer = offers.find(o => o.offer_type === 'welcome_bonus') ?? offers[0]
   const cashback = offer?.cashback_value ? parseFloat(offer.cashback_value) : null
 
   const welcomeBonus = offer?.headline ?? undefined
@@ -244,6 +246,7 @@ export function adaptCard(api: ApiCard): CreditCard {
     creditScoreMin:            api.credit_score_min ?? undefined,
     allOffers:                 api.current_offers?.map(o => ({
       id:                      o.id,
+      offerType:               o.offer_type,
       headline:                o.headline,
       pointsValue:             o.points_value ?? undefined,
       cashbackValue:           o.cashback_value ? parseFloat(o.cashback_value) : undefined,

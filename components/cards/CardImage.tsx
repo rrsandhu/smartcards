@@ -28,7 +28,7 @@ export default function CardImage({ card, className }: Props) {
       <img
         src={card.imageUrl}
         alt={card.name}
-        className={cn(className, 'object-contain bg-gray-50 rounded-lg')}
+        className={cn(className, 'object-contain rounded-lg')}
         onError={() => setFailed(true)}
       />
     )

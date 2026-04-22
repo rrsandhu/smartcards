@@ -15,7 +15,7 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
     return (
       <div className="card-surface p-5 flex flex-col sm:flex-row items-start gap-5">
         {/* Card image */}
-        <div className="w-24 h-15 flex-shrink-0">
+        <div className="w-24 h-16 flex-shrink-0">
           <CardImage card={card} className="w-24 h-16" />
         </div>
 
@@ -83,7 +83,7 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
       {/* Header */}
       <div className="p-5 pb-4 border-b border-parchment-100">
         <div className="flex items-start justify-between gap-3 mb-4">
-          <CardImage card={card} className="w-20 h-13" />
+          <CardImage card={card} className="w-20 h-14" />
           <div className="flex flex-wrap gap-1 justify-end">
             {card.editorsPick && (
               <Badge variant="gold">
