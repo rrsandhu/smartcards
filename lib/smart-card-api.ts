@@ -9,7 +9,9 @@
 
 import type { CreditCard, CardOffer, CardCategory, CardNetwork, RewardsType, EarnRate } from '@/types'
 
-const API = process.env.NEXT_PUBLIC_SMART_CARD_API ?? 'https://smart-card-offers.vercel.app'
+// API base — empty string = same origin (our own Next.js API routes)
+// Set NEXT_PUBLIC_SMART_CARD_API to override (e.g. for local dev against the external backend)
+const API = process.env.NEXT_PUBLIC_SMART_CARD_API ?? ''
 
 // ─── Raw API types ────────────────────────────────────────────────────────────
 

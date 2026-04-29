@@ -18,7 +18,7 @@ export default function NewsletterSignup({ variant = 'default' }: Props) {
     setStatus('loading')
     setErrorMsg('')
     try {
-      const res = await fetch('/api/subscribe', {
+      const res = await fetch('/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
