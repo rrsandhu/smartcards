@@ -7,6 +7,7 @@ import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import SectionHeader from '@/components/ui/SectionHeader'
 import DisclaimerBlock from '@/components/shared/DisclaimerBlock'
 import HeroSection from '@/components/home/HeroSection'
+import OfferCardImage from '@/components/shared/OfferCardImage'
 import { getFeaturedArticles } from '@/data/articles'
 import { getFeaturedOffers } from '@/data/offers'
 import { getFeaturedTools } from '@/data/tools'
@@ -36,17 +37,7 @@ function OfferBadge({ offer }: { offer: CardOffer }) {
     <div className="card-surface overflow-hidden flex flex-col h-[26rem]">
       {/* Card image header */}
       <div className="h-44 bg-gradient-to-br from-navy-600 to-navy-900 relative flex items-center justify-center">
-        {offer.imageUrl ? (
-          <div className="w-52 h-32 flex items-center justify-center">
-            <img
-              src={offer.imageUrl}
-              alt={offer.cardName}
-              className="w-full h-full object-contain drop-shadow-lg"
-            />
-          </div>
-        ) : (
-          <span className="text-white font-bold text-lg opacity-40">{offer.issuer}</span>
-        )}
+        <OfferCardImage imageUrl={offer.imageUrl} cardName={offer.cardName} issuer={offer.issuer} />
         {offer.isLimitedTime && (
           <span className="absolute top-3 right-3 text-xs font-semibold text-red-700 bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1">
             <Zap className="w-2.5 h-2.5" />Limited

@@ -6,6 +6,7 @@ import SectionHeader from '@/components/ui/SectionHeader'
 import DisclaimerBlock from '@/components/shared/DisclaimerBlock'
 import NewsletterSignup from '@/components/shared/NewsletterSignup'
 import Badge from '@/components/ui/Badge'
+import OfferCardImage from '@/components/shared/OfferCardImage'
 import { fetchOffers } from '@/lib/smart-card-api'
 import { offers as localOffers } from '@/data/offers'
 import { formatDate } from '@/lib/utils'
@@ -65,17 +66,7 @@ export default async function BestOffersPage() {
               <div key={offer.id} className="card-surface overflow-hidden flex flex-col ring-1 ring-red-100">
                 {/* Card image header */}
                 <div className="h-44 bg-gradient-to-br from-navy-700 to-navy-950 relative flex items-center justify-center">
-                  {offer.imageUrl ? (
-                    <div className="w-52 h-32 flex items-center justify-center">
-                      <img
-                        src={offer.imageUrl}
-                        alt={offer.cardName}
-                        className="w-full h-full object-contain drop-shadow-lg"
-                      />
-                    </div>
-                  ) : (
-                    <span className="text-white font-bold text-lg opacity-40">{offer.issuer}</span>
-                  )}
+                  <OfferCardImage imageUrl={offer.imageUrl} cardName={offer.cardName} issuer={offer.issuer} />
                   <Badge variant="red" className="absolute top-3 left-3">
                     <Zap className="w-2.5 h-2.5 mr-1" />Limited Time
                   </Badge>

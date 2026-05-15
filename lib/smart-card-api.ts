@@ -366,7 +366,7 @@ export async function fetchOffers(params?: {
     qs.set('limit', String(params?.limit ?? 50))
     if (params?.page) qs.set('page', String(params.page))
 
-    const res = await fetch(`${API}/api/offers?${qs}`, { next: { revalidate: 3600 } })
+    const res = await fetch(`${API}/api/offers?${qs}`, { next: { revalidate: 60 } })
     if (!res.ok) return []
     const data = await res.json()
 
