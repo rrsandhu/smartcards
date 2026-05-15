@@ -9,13 +9,22 @@ export async function GET(req: NextRequest) {
   const page  = Math.max(1, parseInt(searchParams.get('page')  ?? '1'))
   const limit = Math.min(100, parseInt(searchParams.get('limit') ?? '20'))
   try {
-    const [{ data: offers, total }, valuationsResult] = await Promise.all([
-      getActiveOffers(limitedOnly, page, limit),
-      supabaseAdmin.from('points_valuations').select('program, cpp_low, cpp_mid, cpp_high'),
-    ])
+    let offers: any[], total: number, valuationsResult: any
+    try {
+      ;[{ data: offers, total }, valuationsResult] = await Promise.all([
+        getActiveOffers(limitedOnly, page, limit),
+        supabaseAdmin.from('points_valuations').select('program, cpp_low, cpp_mid, cpp_high'),
+      ])
+    } catch (fetchErr) {
+      console.error('/api/offers fetch stage failed:', fetchErr)
+      throw fetchErr
+    }
 
+    if (valuationsResult.error) {
+      console.warn('/api/offers points_valuations query failed (CPP values unavailable):', valuationsResult.error.message)
+    }
     const valuationMap = new Map<string, { cpp_low: number; cpp_mid: number; cpp_high: number }>(
-      (valuationsResult.data ?? []).map(v => [v.program, { cpp_low: Number(v.cpp_low), cpp_mid: Number(v.cpp_mid), cpp_high: Number(v.cpp_high) }])
+      (valuationsResult.data ?? []).map((v: any) => [v.program, { cpp_low: Number(v.cpp_low), cpp_mid: Number(v.cpp_mid), cpp_high: Number(v.cpp_high) }])
     )
 
     // Enrich with is_better_than_usual and estimated first-year value
@@ -34,7 +43,6 @@ export async function GET(req: NextRequest) {
       const cpp          = valuationMap.get(canonicalProgram(card?.rewards_program) ?? '')
       const annualFee    = card?.annual_fee ?? 0
       const annualCredits = (card?.credits ?? [])
-        .filter((c: any) => !c.frequency || c.frequency === 'annual')
         .reduce((sum: number, c: any) => sum + (Number(c.amount) || 0), 0)
 
       let bonus_points = o.points_value ?? 0
