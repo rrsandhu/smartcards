@@ -100,7 +100,8 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ cards, count: cards.length, total, page, limit })
   } catch (err) {
-    console.error('/api/offers error:', err)
-    return NextResponse.json({ error: 'Failed to fetch offers' }, { status: 500 })
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('/api/offers error:', message)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
