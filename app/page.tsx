@@ -37,11 +37,13 @@ function OfferBadge({ offer }: { offer: CardOffer }) {
       {/* Card image header */}
       <div className="h-44 bg-gradient-to-br from-navy-600 to-navy-900 relative flex items-center justify-center">
         {offer.imageUrl ? (
-          <img
-            src={offer.imageUrl}
-            alt={offer.cardName}
-            className="h-32 w-auto object-contain drop-shadow-lg"
-          />
+          <div className="w-52 h-32 flex items-center justify-center">
+            <img
+              src={offer.imageUrl}
+              alt={offer.cardName}
+              className="w-full h-full object-contain drop-shadow-lg"
+            />
+          </div>
         ) : (
           <span className="text-white font-bold text-lg opacity-40">{offer.issuer}</span>
         )}

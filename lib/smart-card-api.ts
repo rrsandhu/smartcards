@@ -384,12 +384,9 @@ export async function fetchOffers(params?: {
           referral_url: card.referral_url ?? null,
           issuer:       card.issuer,
         }
-        // welcome_bonus is the primary offer — include it first
+        // One offer per card — welcome_bonus is always the best/primary offer
         const welcomeBonus = (card as any).welcome_bonus
         if (welcomeBonus) rawOffers.push({ ...welcomeBonus, card: cardMeta })
-        for (const o of ((card as any).additional_offers ?? card.current_offers ?? []) as ApiOffer[]) {
-          rawOffers.push({ ...o, card: cardMeta })
-        }
       }
     }
 

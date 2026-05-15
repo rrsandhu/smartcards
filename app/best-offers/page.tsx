@@ -66,11 +66,13 @@ export default async function BestOffersPage() {
                 {/* Card image header */}
                 <div className="h-44 bg-gradient-to-br from-navy-700 to-navy-950 relative flex items-center justify-center">
                   {offer.imageUrl ? (
-                    <img
-                      src={offer.imageUrl}
-                      alt={offer.cardName}
-                      className="h-32 w-auto object-contain drop-shadow-lg"
-                    />
+                    <div className="w-52 h-32 flex items-center justify-center">
+                      <img
+                        src={offer.imageUrl}
+                        alt={offer.cardName}
+                        className="w-full h-full object-contain drop-shadow-lg"
+                      />
+                    </div>
                   ) : (
                     <span className="text-white font-bold text-lg opacity-40">{offer.issuer}</span>
                   )}
@@ -162,7 +164,7 @@ export default async function BestOffersPage() {
 
                   {/* Card image */}
                   {offer.imageUrl ? (
-                    <img src={offer.imageUrl} alt={offer.cardName} className="w-20 h-13 object-contain rounded-lg bg-gray-50 flex-shrink-0" />
+                    <img src={offer.imageUrl} alt={offer.cardName} className="w-20 h-12 object-contain rounded-lg bg-white flex-shrink-0" />
                   ) : (
                     <div className="w-16 h-10 rounded-lg bg-gradient-to-br from-navy-600 to-navy-900 flex-shrink-0 flex items-center justify-center">
                       <span className="text-white font-bold text-xs opacity-80">
