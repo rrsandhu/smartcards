@@ -376,16 +376,27 @@ export async function rejectOffer(id: string) {
   revalidatePath('/admin')
 }
 
-export async function rejectAllPending(): Promise<{ rejected: number }> {
-  const { data, error } = await supabaseAdmin
-    .from('card_offers')
-    .update({ is_active: false, review_status: 'rejected' })
-    .eq('review_status', 'pending_review')
-    .select('id')
-  if (error) throw new Error(error.message)
+export async function rejectAllPending(): Promise<{ rejectedOffers: number; rejectedCardUpdates: number }> {
+  const [offersResult, cardUpdatesResult] = await Promise.all([
+    supabaseAdmin
+      .from('card_offers')
+      .update({ is_active: false, review_status: 'rejected' })
+      .eq('review_status', 'pending_review')
+      .select('id'),
+    supabaseAdmin
+      .from('credit_cards')
+      .update({ has_pending_update: false, pending_card_data: null })
+      .eq('has_pending_update', true)
+      .select('id'),
+  ])
+  if (offersResult.error) throw new Error(offersResult.error.message)
+  if (cardUpdatesResult.error) throw new Error(cardUpdatesResult.error.message)
   revalidatePath('/admin/review')
   revalidatePath('/admin')
-  return { rejected: (data ?? []).length }
+  return {
+    rejectedOffers:      (offersResult.data ?? []).length,
+    rejectedCardUpdates: (cardUpdatesResult.data ?? []).length,
+  }
 }
 
 export async function getCardActiveOffers(cardId: string): Promise<{

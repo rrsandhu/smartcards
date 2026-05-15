@@ -44,8 +44,12 @@ export default function ReviewQueue({ groups, allCards, pendingCardUpdates }: {
 
   function handleRejectAll() {
     const totalOffers = groups.reduce((sum, g) => sum + g.pending.length, 0)
+    const cardUpdates = pendingCardUpdates.length
+    const cardUpdateLine = cardUpdates > 0
+      ? `\n${cardUpdates} pending card data update${cardUpdates !== 1 ? 's' : ''} will also be cleared.`
+      : ''
     if (!window.confirm(
-      `Reject all ${totalOffers} pending offer${totalOffers !== 1 ? 's' : ''} across ${groups.length} card${groups.length !== 1 ? 's' : ''}?\n\nCurrently active offers will NOT be affected.`
+      `Reject all ${totalOffers} pending offer${totalOffers !== 1 ? 's' : ''} across ${groups.length} card${groups.length !== 1 ? 's' : ''}?${cardUpdateLine}\n\nCurrently active offers and live card data will NOT be affected.`
     )) return
     setRejectAllErr(null)
     startTrans(async () => {
