@@ -1,6 +1,7 @@
 // Public API — for external frontend use only
 import { NextRequest, NextResponse } from 'next/server'
 import { getActiveOffers, getOfferHistoryStats, supabaseAdmin } from '@/lib/supabase'
+import { canonicalProgram } from '@/lib/sources'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl
@@ -30,7 +31,7 @@ export async function GET(req: NextRequest) {
       }
 
       const card         = o.card
-      const cpp          = card?.rewards_program ? valuationMap.get(card.rewards_program) : undefined
+      const cpp          = valuationMap.get(canonicalProgram(card?.rewards_program) ?? '')
       const annualFee    = card?.annual_fee ?? 0
       const annualCredits = (card?.credits ?? [])
         .filter((c: any) => !c.frequency || c.frequency === 'annual')
