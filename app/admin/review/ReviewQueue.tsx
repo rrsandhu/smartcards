@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { approveOffer, rejectOffer, updateOffer, updateCard, createOffer, deleteCard, deleteOffer, setCardNoBonus, mergeCard, getCardActiveOffers, mergeCardWithOfferSelection, approveCardUpdate, rejectCardUpdate } from '../actions'
+import { approveOffer, rejectOffer, rejectAllPending, updateOffer, updateCard, createOffer, deleteCard, deleteOffer, setCardNoBonus, mergeCard, getCardActiveOffers, mergeCardWithOfferSelection, approveCardUpdate, rejectCardUpdate } from '../actions'
 import { SOURCE_LABELS, SOURCE_NAMES } from '@/lib/sources'
 import type { CardGroup, OfferRow, ActiveCardOption, PendingCardUpdate } from './page'
 
@@ -38,8 +38,40 @@ export default function ReviewQueue({ groups, allCards, pendingCardUpdates }: {
   allCards: ActiveCardOption[]
   pendingCardUpdates: PendingCardUpdate[]
 }) {
+  const [isPending, startTrans] = useTransition()
+  const [rejectAllErr, setRejectAllErr] = useState<string | null>(null)
+  const router = useRouter()
+
+  function handleRejectAll() {
+    const totalOffers = groups.reduce((sum, g) => sum + g.pending.length, 0)
+    if (!window.confirm(
+      `Reject all ${totalOffers} pending offer${totalOffers !== 1 ? 's' : ''} across ${groups.length} card${groups.length !== 1 ? 's' : ''}?\n\nCurrently active offers will NOT be affected.`
+    )) return
+    setRejectAllErr(null)
+    startTrans(async () => {
+      try {
+        await rejectAllPending()
+        router.refresh()
+      } catch (e) {
+        setRejectAllErr(e instanceof Error ? e.message : 'Reject all failed')
+      }
+    })
+  }
+
   return (
     <div className="space-y-6">
+      {groups.length > 1 && (
+        <div className="flex items-center justify-end gap-3">
+          <button
+            onClick={handleRejectAll}
+            disabled={isPending}
+            className="text-sm text-red-600 border border-red-300 px-3 py-1.5 rounded hover:bg-red-50 disabled:opacity-40 transition-colors"
+          >
+            {isPending ? 'Rejecting…' : `Reject All (${groups.length} cards)`}
+          </button>
+          {rejectAllErr && <span className="text-xs text-red-600">{rejectAllErr}</span>}
+        </div>
+      )}
       {groups.map(g => (
         <CardSection key={g.card_id} group={g} allCards={allCards} />
       ))}

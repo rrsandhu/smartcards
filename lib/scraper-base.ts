@@ -470,6 +470,16 @@ export abstract class BaseScraper {
           if (error) throw new Error(`offer overwrite failed: ${error.message}`)
         }
 
+        // Heartbeat the currently-active offer for this (card_id, offer_type) so
+        // markStaleOffersInactive doesn't kill it while the replacement awaits review.
+        // Matches zero rows harmlessly when no active offer exists yet.
+        await supabaseAdmin
+          .from('card_offers')
+          .update({ last_seen_at: now })
+          .eq('card_id', card_id)
+          .eq('offer_type', offer.offer_type)
+          .eq('is_active', true)
+
         await logOfferHistory({ card_id, offer_type: offer.offer_type, headline: offer.headline, points_value: offer.points_value, cashback_value: offer.cashback_value, spend_requirement: offer.spend_requirement, spend_timeframe_days: offer.spend_timeframe_days, source_priority: incomingPriority })
         return 'saved'
       }

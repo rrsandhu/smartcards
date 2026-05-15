@@ -376,6 +376,18 @@ export async function rejectOffer(id: string) {
   revalidatePath('/admin')
 }
 
+export async function rejectAllPending(): Promise<{ rejected: number }> {
+  const { data, error } = await supabaseAdmin
+    .from('card_offers')
+    .update({ is_active: false, review_status: 'rejected' })
+    .eq('review_status', 'pending_review')
+    .select('id')
+  if (error) throw new Error(error.message)
+  revalidatePath('/admin/review')
+  revalidatePath('/admin')
+  return { rejected: (data ?? []).length }
+}
+
 export async function getCardActiveOffers(cardId: string): Promise<{
   id: string
   offer_type: string
