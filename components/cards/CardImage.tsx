@@ -25,12 +25,14 @@ export default function CardImage({ card, className }: Props) {
 
   if (card.imageUrl && !failed) {
     return (
-      <img
-        src={card.imageUrl}
-        alt={card.name}
-        className={cn(className, 'object-contain rounded-lg')}
-        onError={() => setFailed(true)}
-      />
+      <div className={cn(className, 'rounded-lg bg-white overflow-hidden flex items-center justify-center')}>
+        <img
+          src={card.imageUrl}
+          alt={card.name}
+          className="w-full h-full object-contain"
+          onError={() => setFailed(true)}
+        />
+      </div>
     )
   }
 

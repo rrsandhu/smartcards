@@ -54,11 +54,33 @@ function OfferBadge({ offer }: { offer: CardOffer }) {
 
       <div className="p-4 flex flex-col gap-3 flex-1">
         <div>
+          <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+            {offer.isBetterThanUsual && (
+              <span className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                ★ Better than usual
+              </span>
+            )}
+          </div>
           <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-0.5">{offer.cardName}</h3>
           <p className="text-xs text-gray-500 mb-2">{offer.issuer}</p>
           <p className="text-sm text-gray-700 leading-snug line-clamp-3">{offer.headline}</p>
           {offer.spendRequirement && (
             <p className="text-xs text-gray-500 mt-1.5">Spend: {offer.spendRequirement}</p>
+          )}
+          {offer.estimatedValueMid != null && (
+            <div className="relative group inline-flex mt-2 cursor-help w-fit">
+              <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                ${offer.estimatedValueMid.toLocaleString()} est. first year value
+              </span>
+              {offer.estimatedValueLow != null && offer.estimatedValueHigh != null && offer.estimatedValueLow !== offer.estimatedValueHigh && (
+                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-20 pointer-events-none">
+                  <div className="bg-gray-900 text-white text-xs rounded px-2.5 py-1.5 whitespace-nowrap shadow-lg">
+                    Range: ${offer.estimatedValueLow.toLocaleString()} – ${offer.estimatedValueHigh.toLocaleString()}
+                  </div>
+                  <div className="w-2 h-2 bg-gray-900 rotate-45 ml-3 -mt-1" />
+                </div>
+              )}
+            </div>
           )}
         </div>
         <div className="flex flex-col gap-2 mt-auto">

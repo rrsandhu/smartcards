@@ -125,6 +125,10 @@ export interface CardOffer {
   featured: boolean
   lastUpdated: string
   tags: string[]
+  isBetterThanUsual?: boolean
+  estimatedValueLow?: number    // (bonus × cpp_low) + annual_credits − annual_fee
+  estimatedValueMid?: number    // (bonus × cpp_mid) + annual_credits − annual_fee
+  estimatedValueHigh?: number   // (bonus × cpp_high) + annual_credits − annual_fee
 }
 
 // ─── Blog / Articles ──────────────────────────────────────────────────────────

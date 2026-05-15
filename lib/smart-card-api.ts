@@ -30,6 +30,9 @@ interface ApiOffer {
   expires_at: string | null       // YYYY-MM-DD, not a timestamp
   is_verified: boolean
   is_better_than_usual?: boolean
+  estimated_value_low?: number | null
+  estimated_value_mid?: number | null
+  estimated_value_high?: number | null
   source_priority: number
   confidence_score: number
   source_url?: string
@@ -283,27 +286,31 @@ export function adaptOffer(api: ApiOffer): CardOffer {
   }
 
   return {
-    id:                api.id,
-    cardId:            card?.slug ?? api.card_id ?? '',
-    cardSlug:          card?.slug ?? '',
-    cardName:          card?.name ?? 'Unknown Card',
-    issuer:            card?.issuer?.name ?? '',
-    offerType:         api.is_limited_time ? 'limited-time' : 'welcome-bonus',
+    id:                   api.id,
+    cardId:               card?.slug ?? api.card_id ?? '',
+    cardSlug:             card?.slug ?? '',
+    cardName:             card?.name ?? 'Unknown Card',
+    issuer:               card?.issuer?.name ?? '',
+    offerType:            api.is_limited_time ? 'limited-time' : 'welcome-bonus',
     headline,
     bonusAmount,
-    bonusUnit:         api.points_value ? 'points' : cashback ? 'percent' : undefined,
-    spendRequirement:  api.spend_requirement
+    bonusUnit:            api.points_value ? 'points' : cashback ? 'percent' : undefined,
+    spendRequirement:     api.spend_requirement
       ? `$${api.spend_requirement.toLocaleString()}${api.spend_timeframe_days ? ` in ${Math.round(api.spend_timeframe_days / 30)} months` : ''}`
       : undefined,
-    spendAmount:       api.spend_requirement ?? undefined,
-    spendPeriodMonths: api.spend_timeframe_days ? Math.round(api.spend_timeframe_days / 30) : undefined,
+    spendAmount:          api.spend_requirement ?? undefined,
+    spendPeriodMonths:    api.spend_timeframe_days ? Math.round(api.spend_timeframe_days / 30) : undefined,
     offerExpiry,
-    isLimitedTime:     api.is_limited_time,
-    affiliateLink:     card?.referral_url ?? api.source_url ?? undefined,
-    imageUrl:          card?.image_url ?? undefined,
-    featured:          api.confidence_score >= 70,
-    lastUpdated:       api.last_seen_at ?? new Date().toISOString(),
-    tags:              [],
+    isLimitedTime:        api.is_limited_time,
+    affiliateLink:        card?.referral_url ?? api.source_url ?? undefined,
+    imageUrl:             card?.image_url ?? undefined,
+    featured:             api.confidence_score >= 70,
+    lastUpdated:          api.last_seen_at ?? new Date().toISOString(),
+    tags:                 [],
+    isBetterThanUsual:    api.is_better_than_usual ?? false,
+    estimatedValueLow:    api.estimated_value_low  ?? undefined,
+    estimatedValueMid:    api.estimated_value_mid  ?? undefined,
+    estimatedValueHigh:   api.estimated_value_high ?? undefined,
   }
 }
 
@@ -369,19 +376,19 @@ export async function fetchOffers(params?: {
       rawOffers = data.offers as ApiOffer[]
     } else if (Array.isArray(data.cards)) {
       for (const card of data.cards as ApiCard[]) {
-        const embedded = (card as any).additional_offers ?? card.current_offers ?? []
-        for (const o of embedded as ApiOffer[]) {
-          rawOffers.push({
-            ...o,
-            card: {
-              id:          card.id,
-              name:        card.name,
-              slug:        card.slug,
-              image_url:   card.image_url,
-              referral_url: card.referral_url ?? null,
-              issuer:      card.issuer,
-            },
-          })
+        const cardMeta = {
+          id:           card.id,
+          name:         card.name,
+          slug:         card.slug,
+          image_url:    card.image_url,
+          referral_url: card.referral_url ?? null,
+          issuer:       card.issuer,
+        }
+        // welcome_bonus is the primary offer — include it first
+        const welcomeBonus = (card as any).welcome_bonus
+        if (welcomeBonus) rawOffers.push({ ...welcomeBonus, card: cardMeta })
+        for (const o of ((card as any).additional_offers ?? card.current_offers ?? []) as ApiOffer[]) {
+          rawOffers.push({ ...o, card: cardMeta })
         }
       }
     }

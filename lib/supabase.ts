@@ -201,7 +201,7 @@ export async function getActiveOffers(limitedTimeOnly = false, page = 1, limit =
         insurance:card_insurance(coverage_type, maximum, details),
         earn_rates:card_earn_rates(category, rate_multiplier, details),
         transfer_partners:card_transfer_partners(partner_name, ratio, transfer_time, alliance, best_for),
-        credits:card_credits(credit_type, amount, details),
+        credits:card_credits(credit_type, amount, frequency, details),
         lounge_access:card_lounge_access(lounge_network, visits_per_year, guest_policy, details)
       )
     `, { count: 'exact' })
