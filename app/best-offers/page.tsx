@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: { title: 'Best Canadian Credit Card Offers — April 2026', description: 'Top welcome bonuses and limited-time credit card promotions for Canadians.', url: 'https://smartcardoffers.ca/best-offers', type: 'website' },
 }
 
-export const revalidate = 3600 // refresh every hour
+export const revalidate = 60
 
 export default async function BestOffersPage() {
   // Fetch live offers from Smart Card Offers API, fall back to local data
