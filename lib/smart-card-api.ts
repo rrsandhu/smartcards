@@ -167,7 +167,7 @@ function toEarnRates(card: ApiCard): EarnRate[] {
     const seen = new Set<string>()
     return card.earn_rates
       .filter(r => r.rate_multiplier > 0)
-      .map(r => {
+      .map((r): EarnRate | null => {
         const label = MULTIPLIER_LABEL[r.category.toLowerCase()] ?? r.category
         if (seen.has(label)) return null
         seen.add(label)
