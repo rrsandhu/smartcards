@@ -34,9 +34,11 @@ export async function GET(req: NextRequest) {
     const enriched = offers.map((o: any) => {
       const stats = statsMap.get(`${o.card_id}:${o.offer_type}`)
       let is_better_than_usual = false
+      const avg_points_12mo   = stats?.avg_points_12mo   ?? null
+      const avg_cashback_12mo = stats?.avg_cashback_12mo ?? null
       if (stats) {
-        if (o.points_value   != null && stats.avg_points_12mo   != null && o.points_value   > stats.avg_points_12mo)   is_better_than_usual = true
-        if (o.cashback_value != null && stats.avg_cashback_12mo != null && o.cashback_value > stats.avg_cashback_12mo) is_better_than_usual = true
+        if (o.points_value   != null && avg_points_12mo   != null && o.points_value   > avg_points_12mo)   is_better_than_usual = true
+        if (o.cashback_value != null && avg_cashback_12mo != null && o.cashback_value > avg_cashback_12mo) is_better_than_usual = true
       }
 
       const card         = o.card
@@ -66,7 +68,7 @@ export async function GET(req: NextRequest) {
         estimated_value_high = val
       }
 
-      return { ...o, is_better_than_usual, estimated_value_low, estimated_value_mid, estimated_value_high }
+      return { ...o, is_better_than_usual, avg_points_12mo, avg_cashback_12mo, estimated_value_low, estimated_value_mid, estimated_value_high }
     })
 
     // Group by card — one object per card with welcome_bonus + additional_offers nested.

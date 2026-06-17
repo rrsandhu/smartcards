@@ -7,7 +7,7 @@
  * API base: https://smart-card-offers.vercel.app
  */
 
-import type { CreditCard, CardOffer, CardCategory, CardNetwork, RewardsType, EarnRate } from '@/types'
+import type { CreditCard, CardOffer, CardCategory, CardNetwork, RewardsType, EarnRate, TransferPartner, LoungeDetail, CardCredit, Insurance } from '@/types'
 
 // API base — empty string = same origin (our own Next.js API routes)
 // Set NEXT_PUBLIC_SMART_CARD_API to override (e.g. for local dev against the external backend)
@@ -66,8 +66,11 @@ interface ApiCard {
   rewards_type: 'points' | 'cashback' | 'hybrid'
   earn_rate_base: number | null
   earn_rate_multipliers: Record<string, number> | null
-  transfer_partners?: string[] | null
-  lounge_access: boolean | Array<{ lounge_network?: string; visits_per_year?: number; details?: string }>
+  transfer_partners?: Array<{ partner_name: string; ratio?: string | null; transfer_time?: string | null; alliance?: string | null; best_for?: string | null }> | string[] | null
+  lounge_access: boolean | Array<{ lounge_network?: string; visits_per_year?: number; guest_policy?: string; details?: string }>
+  credits?: Array<{ credit_type: string; amount: number | string; details?: string | null }> | null
+  earn_rates?: Array<{ category: string; rate_multiplier: number; details?: string | null }> | null
+  insurance?: Array<{ coverage_type: string; maximum?: string | null; details?: string | null }> | null
   travel_insurance: boolean
   purchase_protection: boolean
   foreign_transaction_fee: number | null
@@ -83,7 +86,9 @@ interface ApiCard {
   is_featured: boolean
   tags: string[]
   issuer: { id: string; name: string; slug: string; website?: string }
-  current_offers?: ApiOffer[]   // list + detail endpoint (new field name)
+  current_offers?: ApiOffer[]      // detail endpoint: flat array of all offers
+  welcome_bonus?: ApiOffer | null  // list endpoint: grouped primary offer
+  additional_offers?: ApiOffer[]   // list endpoint: secondary offers
 }
 
 export interface ApiIssuer {
@@ -155,8 +160,29 @@ const MULTIPLIER_LABEL: Record<string, string> = {
 }
 
 function toEarnRates(card: ApiCard): EarnRate[] {
-  const rates: EarnRate[] = []
   const unit = card.rewards_type === 'cashback' ? 'percent' : 'points'
+
+  // Prefer the rich earn_rates array (from card_earn_rates table, available on detail endpoint)
+  if (card.earn_rates && card.earn_rates.length > 0) {
+    const seen = new Set<string>()
+    return card.earn_rates
+      .filter(r => r.rate_multiplier > 0)
+      .map(r => {
+        const label = MULTIPLIER_LABEL[r.category.toLowerCase()] ?? r.category
+        if (seen.has(label)) return null
+        seen.add(label)
+        return {
+          category: label,
+          rate:     r.rate_multiplier,
+          unit,
+          details:  r.details ?? undefined,
+        }
+      })
+      .filter((r): r is EarnRate => r !== null)
+  }
+
+  // Fall back to the flat multipliers map from the list endpoint
+  const rates: EarnRate[] = []
   const seen = new Set<string>()
 
   if (card.earn_rate_multipliers) {
@@ -181,8 +207,11 @@ function toEarnRates(card: ApiCard): EarnRate[] {
 }
 
 export function adaptCard(api: ApiCard): CreditCard {
-  // Prefer the welcome_bonus type as the primary offer; fall back to first offer
-  const offers = api.current_offers ?? []
+  // Normalise: detail endpoint returns current_offers[], list endpoint returns welcome_bonus + additional_offers
+  const offers: ApiOffer[] = api.current_offers
+    ?? (api.welcome_bonus
+        ? [api.welcome_bonus, ...(api.additional_offers ?? [])]
+        : (api.additional_offers ?? []))
   const offer = offers.find(o => o.offer_type === 'welcome_bonus') ?? offers[0]
   const cashback = offer?.cashback_value ? parseFloat(offer.cashback_value) : null
 
@@ -205,13 +234,74 @@ export function adaptCard(api: ApiCard): CreditCard {
   const cleanApply = api.apply_url && !api.apply_url.includes('github.com') ? api.apply_url : null
   const applyLink = api.referral_url ?? cleanApply ?? undefined
 
-  // lounge_access changed from boolean to array of objects in the API
+  // lounge_access: boolean (legacy) or array of lounge objects
   const hasLounge = Array.isArray(api.lounge_access)
     ? api.lounge_access.length > 0
     : Boolean(api.lounge_access)
   const loungeLabel = Array.isArray(api.lounge_access) && api.lounge_access.length > 0
     ? (api.lounge_access[0].lounge_network ?? 'Included')
     : (hasLounge ? 'Included' : undefined)
+  const loungeDetails: LoungeDetail[] | undefined = Array.isArray(api.lounge_access) && api.lounge_access.length > 0
+    ? api.lounge_access.map(l => ({
+        network:       l.lounge_network ?? 'Lounge Access',
+        visitsPerYear: l.visits_per_year,
+        guestPolicy:   l.guest_policy,
+        details:       l.details,
+      }))
+    : undefined
+
+  // transfer_partners: may come as array of objects or legacy string array
+  const transferPartners: TransferPartner[] | undefined = api.transfer_partners
+    ? api.transfer_partners.map((p: any) => {
+        if (typeof p === 'string') return { name: p }
+        return {
+          name:         p.partner_name ?? String(p),
+          ratio:        p.ratio        ?? undefined,
+          transferTime: p.transfer_time ?? undefined,
+          alliance:     p.alliance     ?? undefined,
+          bestFor:      p.best_for     ?? undefined,
+        }
+      })
+    : undefined
+
+  // insurance: prefer rich array from card_insurance table (detail endpoint); fall back to booleans
+  const COVERAGE_MAP: Record<string, keyof Insurance> = {
+    travel_medical:       'travelMedical',
+    out_of_province:      'outOfProvince',
+    trip_cancellation:    'tripCancellation',
+    trip_interruption:    'tripInterruption',
+    flight_delay:         'flightDelay',
+    baggage_delay:        'baggageDelay',
+    baggage_loss:         'baggageDelay',
+    rental_car:           'rentalCar',
+    rental_car_collision: 'rentalCar',
+    purchase_protection:  'purchaseProtection',
+    extended_warranty:    'extendedWarranty',
+    mobile_device:        'mobileMaestro',
+    hotel_burglary:       'hotelBurglary',
+  }
+  let insurance: Insurance
+  if (api.insurance && api.insurance.length > 0) {
+    insurance = {}
+    for (const row of api.insurance) {
+      const field = COVERAGE_MAP[row.coverage_type.toLowerCase().replace(/\s+/g, '_')]
+      if (field) {
+        const detail = row.details ?? row.maximum ?? undefined
+        insurance[field] = detail ?? true
+      }
+    }
+  } else {
+    insurance = { travelMedical: api.travel_insurance, purchaseProtection: api.purchase_protection }
+  }
+
+  // credits: annual credits (travel, dining, etc.)
+  const credits: CardCredit[] | undefined = api.credits?.length
+    ? api.credits.map(c => ({
+        creditType: c.credit_type,
+        amount:     Number(c.amount),
+        details:    c.details ?? undefined,
+      }))
+    : undefined
 
   return {
     id:                        api.slug,
@@ -227,9 +317,12 @@ export function adaptCard(api: ApiCard): CreditCard {
     welcomeBonus,
     bonusSummary,
     perks:                     [],
-    insurance:                 { travelMedical: api.travel_insurance, purchaseProtection: api.purchase_protection },
+    insurance,
     foreignTransactionFee:     api.foreign_transaction_fee !== null && api.foreign_transaction_fee > 0,
+    foreignTransactionFeeRate: api.foreign_transaction_fee ?? undefined,
     loungeAccess:              loungeLabel,
+    loungeDetails,
+    credits,
     bestFor:                   api.best_for ?? [],
     pros:                      api.pros ?? [],
     cons:                      api.cons ?? [],
@@ -243,13 +336,9 @@ export function adaptCard(api: ApiCard): CreditCard {
     lastUpdated:               new Date().toISOString().split('T')[0],
     incomeRequirementPersonal: api.min_income ?? undefined,
     shortDescription:          api.short_description ?? undefined,
-    transferPartners:          api.transfer_partners
-                               ? api.transfer_partners.map((p: any) =>
-                                   typeof p === 'string' ? p : (p.partner_name ?? String(p))
-                                 )
-                               : undefined,
+    transferPartners,
     creditScoreMin:            api.credit_score_min ?? undefined,
-    allOffers:                 api.current_offers?.map(o => ({
+    allOffers:                 offers.length ? offers.map(o => ({
       id:                      o.id,
       offerType:               o.offer_type,
       headline:                o.headline,
@@ -265,7 +354,13 @@ export function adaptCard(api: ApiCard): CreditCard {
       monthlyPointsValue:      o.monthly_points_value ?? undefined,
       monthlySpendRequirement: o.monthly_spend_requirement ?? undefined,
       bonusMonths:             o.bonus_months ?? undefined,
-    })) ?? undefined,
+      isBetterThanUsual:       o.is_better_than_usual ?? false,
+      estimatedValueLow:       o.estimated_value_low  ?? undefined,
+      estimatedValueMid:       o.estimated_value_mid  ?? undefined,
+      estimatedValueHigh:      o.estimated_value_high ?? undefined,
+      avgPoints12mo:           (o as any).avg_points_12mo   ?? undefined,
+      avgCashback12mo:         (o as any).avg_cashback_12mo ?? undefined,
+    })) : undefined,
   }
 }
 
@@ -311,6 +406,8 @@ export function adaptOffer(api: ApiOffer): CardOffer {
     estimatedValueLow:    api.estimated_value_low  ?? undefined,
     estimatedValueMid:    api.estimated_value_mid  ?? undefined,
     estimatedValueHigh:   api.estimated_value_high ?? undefined,
+    avgPoints12mo:        (api as any).avg_points_12mo   ?? undefined,
+    avgCashback12mo:      (api as any).avg_cashback_12mo ?? undefined,
   }
 }
 

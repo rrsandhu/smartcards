@@ -80,9 +80,17 @@ export default async function BestOffersPage() {
                 <div className="p-5 flex flex-col gap-3 flex-1">
                   <div>
                     {offer.isBetterThanUsual && (
-                      <span className="inline-block text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full mb-2">
-                        ★ Better than usual
-                      </span>
+                      <div className="mb-2">
+                        <span className="inline-block text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                          ★ Better than usual
+                        </span>
+                        {offer.avgPoints12mo != null && offer.avgPoints12mo > 0 && offer.bonusAmount != null && (
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            Avg: {Math.round(offer.avgPoints12mo).toLocaleString()} pts
+                            {' · '}<span className="text-amber-700 font-medium">+{Math.round(((offer.bonusAmount - offer.avgPoints12mo) / offer.avgPoints12mo) * 100)}% above avg</span>
+                          </p>
+                        )}
+                      </div>
                     )}
                     <h3 className="font-semibold text-gray-900 mb-0.5">{offer.cardName}</h3>
                     <p className="text-xs text-gray-500 mb-2">{offer.issuer}</p>
@@ -166,11 +174,19 @@ export default async function BestOffersPage() {
 
                   {/* Details */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                    <div className="mb-1.5">
                       {offer.isBetterThanUsual && (
-                        <span className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
-                          ★ Better than usual
-                        </span>
+                        <>
+                          <span className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                            ★ Better than usual
+                          </span>
+                          {offer.avgPoints12mo != null && offer.avgPoints12mo > 0 && offer.bonusAmount != null && (
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              Avg: {Math.round(offer.avgPoints12mo).toLocaleString()} pts
+                              {' · '}<span className="text-amber-700 font-medium">+{Math.round(((offer.bonusAmount - offer.avgPoints12mo) / offer.avgPoints12mo) * 100)}% above avg</span>
+                            </p>
+                          )}
+                        </>
                       )}
                     </div>
                     <h3 className="font-semibold text-gray-900 mb-0.5">{offer.cardName}</h3>

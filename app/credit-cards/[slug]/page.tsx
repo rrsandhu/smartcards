@@ -188,13 +188,17 @@ export default async function CardDetailPage({ params }: Props) {
               </div>
               <div className="text-center">
                 <p className={`text-xl font-bold ${card.foreignTransactionFee ? 'text-gray-900' : 'text-green-700'}`}>
-                  {card.foreignTransactionFee ? '2.5%' : 'None'}
+                  {card.foreignTransactionFee
+                    ? `${card.foreignTransactionFeeRate ?? 2.5}%`
+                    : 'None'}
                 </p>
                 <p className="text-xs text-gray-500 mt-0.5">FX Fee</p>
               </div>
               <div className="text-center">
-                <p className="text-xl font-bold text-gray-900">
-                  {card.incomeRequirementPersonal ? formatCAD(card.incomeRequirementPersonal, 0) : '—'}
+                <p className={`text-xl font-bold ${card.incomeRequirementPersonal ? 'text-gray-900' : 'text-gray-400'}`}>
+                  {card.incomeRequirementPersonal
+                    ? formatCAD(card.incomeRequirementPersonal, 0)
+                    : 'None'}
                 </p>
                 <p className="text-xs text-gray-500 mt-0.5">Min. Income</p>
               </div>
@@ -211,6 +215,31 @@ export default async function CardDetailPage({ params }: Props) {
                     <span className="text-xs text-red-600 font-medium">Expires {formatDate(bestOffer.expiresAt)}</span>
                   )}
                 </div>
+                {bestOffer.isBetterThanUsual && (
+                  <div className="mb-1.5">
+                    <span className="inline-block text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                      ★ Better than usual
+                    </span>
+                    {bestOffer.avgPoints12mo != null && bestOffer.avgPoints12mo > 0 && bestOffer.pointsValue != null && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        12-month avg: {Math.round(bestOffer.avgPoints12mo).toLocaleString()} pts
+                        {' · '}this offer is{' '}
+                        <span className="font-medium text-amber-700">
+                          {Math.round(((bestOffer.pointsValue - bestOffer.avgPoints12mo) / bestOffer.avgPoints12mo) * 100)}% above average
+                        </span>
+                      </p>
+                    )}
+                    {bestOffer.avgCashback12mo != null && bestOffer.cashbackValue != null && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        12-month avg: ${bestOffer.avgCashback12mo.toLocaleString()}
+                        {' · '}this offer is{' '}
+                        <span className="font-medium text-amber-700">
+                          {Math.round(((bestOffer.cashbackValue - bestOffer.avgCashback12mo) / bestOffer.avgCashback12mo) * 100)}% above average
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                )}
                 <p className="font-semibold text-gray-900 text-sm">{bestOffer.headline}</p>
                 {bestOffer.spendRequirement && (
                   <p className="text-xs text-gray-600 mt-1">
@@ -222,6 +251,21 @@ export default async function CardDetailPage({ params }: Props) {
                   <p className="text-xs text-navy-700 font-medium mt-1">
                     {bestOffer.pointsValue!.toLocaleString()} {card.pointsProgram ?? 'points'}
                   </p>
+                )}
+                {bestOffer.estimatedValueMid != null && (
+                  <div className="relative group inline-flex mt-2 cursor-help w-fit">
+                    <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                      ${bestOffer.estimatedValueMid.toLocaleString()} est. first year value
+                    </span>
+                    {bestOffer.estimatedValueLow != null && bestOffer.estimatedValueHigh != null && bestOffer.estimatedValueLow !== bestOffer.estimatedValueHigh && (
+                      <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-20 pointer-events-none">
+                        <div className="bg-gray-900 text-white text-xs rounded px-2.5 py-1.5 whitespace-nowrap shadow-lg">
+                          Range: ${bestOffer.estimatedValueLow.toLocaleString()} – ${bestOffer.estimatedValueHigh.toLocaleString()}
+                        </div>
+                        <div className="w-2 h-2 bg-gray-900 rotate-45 ml-3 -mt-1" />
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -287,6 +331,21 @@ export default async function CardDetailPage({ params }: Props) {
                       {o.expiresAt && (
                         <p className="text-xs text-red-600 mt-0.5">Expires {formatDate(o.expiresAt)}</p>
                       )}
+                      {o.estimatedValueMid != null && (
+                        <div className="relative group inline-flex mt-1.5 cursor-help w-fit">
+                          <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                            ${o.estimatedValueMid.toLocaleString()} est. value
+                          </span>
+                          {o.estimatedValueLow != null && o.estimatedValueHigh != null && o.estimatedValueLow !== o.estimatedValueHigh && (
+                            <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block z-20 pointer-events-none">
+                              <div className="bg-gray-900 text-white text-xs rounded px-2.5 py-1.5 whitespace-nowrap shadow-lg">
+                                Range: ${o.estimatedValueLow.toLocaleString()} – ${o.estimatedValueHigh.toLocaleString()}
+                              </div>
+                              <div className="w-2 h-2 bg-gray-900 rotate-45 ml-3 -mt-1" />
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                     {o.isVerified && (
                       <span className="text-xs text-green-700 bg-green-50 px-2 py-0.5 rounded-full flex-shrink-0">✓ Verified</span>
@@ -305,16 +364,84 @@ export default async function CardDetailPage({ params }: Props) {
               </h2>
               <div className="space-y-1">
                 {card.earnRates.map((rate, i) => (
-                  <div key={i} className="flex items-center justify-between py-2.5 border-b border-parchment-100 last:border-0">
-                    <span className="text-sm text-gray-700">{rate.category}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-navy-700">
-                        {rate.rate}{rate.unit === 'percent' ? '%' : 'x'}
-                      </span>
-                      <span className="text-xs text-gray-400">
-                        {rate.unit === 'percent' ? 'cash back' : rate.unit}
-                      </span>
+                  <div key={i} className="py-2.5 border-b border-parchment-100 last:border-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700">{rate.category}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-navy-700">
+                          {rate.rate}{rate.unit === 'percent' ? '%' : 'x'}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {rate.unit === 'percent' ? 'cash back' : rate.unit}
+                        </span>
+                      </div>
                     </div>
+                    {rate.details && (
+                      <p className="text-xs text-gray-400 mt-0.5">{rate.details}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Annual credits */}
+          {(card.credits?.length ?? 0) > 0 && (
+            <div className="card-surface p-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-green-600" /> Annual Credits & Perks
+              </h2>
+              <div className="space-y-0">
+                {card.credits!.map((credit, i) => (
+                  <div key={i} className="flex items-start justify-between gap-4 py-3 border-b border-parchment-100 last:border-0">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 capitalize">
+                        {credit.creditType.replace(/_/g, ' ')}
+                      </p>
+                      {credit.details && (
+                        <p className="text-xs text-gray-500 mt-0.5">{credit.details}</p>
+                      )}
+                    </div>
+                    <span className="text-sm font-semibold text-green-700 flex-shrink-0">
+                      +${credit.amount.toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {card.credits!.length > 1 && (
+                <div className="flex justify-between items-center pt-3 border-t border-parchment-100 mt-1">
+                  <span className="text-xs text-gray-500">Total annual credits</span>
+                  <span className="text-sm font-bold text-green-700">
+                    +${card.credits!.reduce((s, c) => s + c.amount, 0).toLocaleString()}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Lounge access */}
+          {(card.loungeDetails?.length ?? 0) > 0 && (
+            <div className="card-surface p-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Plane className="w-5 h-5 text-navy-600" /> Airport Lounge Access
+              </h2>
+              <div className="divide-y divide-parchment-100">
+                {card.loungeDetails!.map((lounge, i) => (
+                  <div key={i} className="py-3.5 first:pt-0 last:pb-0">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                      <span className="font-semibold text-gray-900 text-sm">{lounge.network}</span>
+                      {lounge.visitsPerYear != null && (
+                        <span className="text-xs bg-navy-50 text-navy-700 px-2 py-0.5 rounded-full font-medium">
+                          {lounge.visitsPerYear === 0 ? 'Unlimited visits' : `${lounge.visitsPerYear} visits/year`}
+                        </span>
+                      )}
+                    </div>
+                    {lounge.guestPolicy && (
+                      <p className="text-xs text-gray-500 mt-0.5">Guests: {lounge.guestPolicy}</p>
+                    )}
+                    {lounge.details && (
+                      <p className="text-xs text-gray-400 mt-0.5">{lounge.details}</p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -327,14 +454,28 @@ export default async function CardDetailPage({ params }: Props) {
               <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <Plane className="w-5 h-5 text-navy-600" /> Transfer Partners
               </h2>
-              <div className="flex flex-wrap gap-2">
+              <div className="divide-y divide-parchment-100">
                 {card.transferPartners!.map(partner => (
-                  <span key={partner} className="text-sm bg-navy-50 text-navy-700 px-3 py-1.5 rounded-full font-medium">
-                    {partner}
-                  </span>
+                  <div key={partner.name} className="py-3 flex flex-wrap items-start gap-x-6 gap-y-1">
+                    <span className="font-medium text-gray-900 text-sm w-40 flex-shrink-0">{partner.name}</span>
+                    <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-500">
+                      {partner.ratio && (
+                        <span><span className="text-gray-400">Ratio</span> <span className="font-semibold text-navy-700">{partner.ratio}</span></span>
+                      )}
+                      {partner.transferTime && (
+                        <span><span className="text-gray-400">Time</span> {partner.transferTime}</span>
+                      )}
+                      {partner.alliance && (
+                        <span><span className="text-gray-400">Alliance</span> {partner.alliance}</span>
+                      )}
+                      {partner.bestFor && (
+                        <span className="text-gray-500 italic">{partner.bestFor}</span>
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
-              <p className="text-xs text-gray-400 mt-3">Points can be transferred to these loyalty programs. Rates and availability subject to change.</p>
+              <p className="text-xs text-gray-400 mt-3">Rates and availability subject to change.</p>
             </div>
           )}
 
@@ -488,7 +629,9 @@ export default async function CardDetailPage({ params }: Props) {
               <div className="flex justify-between">
                 <span className="text-gray-600">FX fee</span>
                 <span className={`font-semibold ${!card.foreignTransactionFee ? 'text-green-700' : ''}`}>
-                  {card.foreignTransactionFee ? '2.5%' : 'None'}
+                  {card.foreignTransactionFee
+                    ? `${card.foreignTransactionFeeRate ?? 2.5}%`
+                    : 'None'}
                 </span>
               </div>
               {card.creditScoreMin && (

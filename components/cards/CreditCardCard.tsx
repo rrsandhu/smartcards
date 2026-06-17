@@ -37,19 +37,27 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
           </h3>
           <p className="text-sm text-gray-500 mb-2">{card.issuer} · {card.network}</p>
           {card.bonusSummary && (
-            <p className="text-sm text-gray-700 line-clamp-2">{card.bonusSummary}</p>
+            <p className="text-sm font-medium text-navy-700 line-clamp-2">{card.bonusSummary}</p>
           )}
           <div className="flex flex-wrap gap-3 mt-3 text-sm">
             <span className="text-gray-600">
               <span className="font-semibold text-gray-900">{formatAnnualFee(card.annualFee)}</span>
             </span>
-            {card.earnRates[0] && (
-              <span className="text-gray-600">
-                Up to <span className="font-semibold text-gray-900">
-                  {Math.max(...card.earnRates.map(r => r.rate))}{card.earnRates[0].unit === 'percent' ? '%' : 'x'}
-                </span> earn
-              </span>
-            )}
+            {(() => {
+              if (!card.earnRates.length) return null
+              const best = card.earnRates.reduce((a, b) => b.rate > a.rate ? b : a)
+              const isPoints = best.unit !== 'percent'
+              if (isPoints && best.rate <= 1) return null
+              const rateStr = isPoints ? `${best.rate}x` : `${best.rate}%`
+              const catShort = best.category.replace(/^(Everything else|All purchases)$/i, 'base')
+              return (
+                <span className="text-gray-600">
+                  <span className="font-semibold text-gray-900">{rateStr}</span>
+                  {isPoints ? ' pts' : ' cash back'}{' '}
+                  <span className="text-gray-400">on {catShort.toLowerCase()}</span>
+                </span>
+              )
+            })()}
           </div>
         </div>
 
@@ -116,9 +124,21 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
           </div>
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-0.5">Best Earn</p>
-            <p className="font-semibold text-sm text-gray-900">
-              {Math.max(...card.earnRates.map(r => r.rate))}{card.earnRates[0].unit === 'percent' ? '%' : 'x'}
-            </p>
+            {(() => {
+              const best = card.earnRates.length
+                ? card.earnRates.reduce((a, b) => b.rate > a.rate ? b : a)
+                : null
+              if (!best || (best.unit !== 'percent' && best.rate <= 1)) {
+                return <p className="font-semibold text-sm text-gray-400">—</p>
+              }
+              const catShort = best.category.replace(/^(Everything else|All purchases)$/i, 'base')
+              return (
+                <p className="font-semibold text-sm text-gray-900">
+                  {best.rate}{best.unit === 'percent' ? '%' : 'x'}
+                  <span className="text-xs font-normal text-gray-500 ml-1">{catShort.toLowerCase()}</span>
+                </p>
+              )
+            })()}
           </div>
         </div>
 

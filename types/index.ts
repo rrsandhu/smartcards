@@ -25,6 +25,28 @@ export interface EarnRate {
   rate: number          // e.g. 3 = 3x points or 3%
   unit: 'points' | 'miles' | 'percent'
   cap?: string          // e.g. "$15,000/year"
+  details?: string      // fine print from card_earn_rates.details
+}
+
+export interface TransferPartner {
+  name: string
+  ratio?: string        // e.g. "1:1", "1:1.25"
+  transferTime?: string // e.g. "Instant", "2-3 days"
+  alliance?: string     // e.g. "Star Alliance", "Oneworld"
+  bestFor?: string      // e.g. "Business class to Asia"
+}
+
+export interface LoungeDetail {
+  network: string       // e.g. "Priority Pass", "Dragon Pass"
+  visitsPerYear?: number
+  guestPolicy?: string  // e.g. "1 free guest", "Guests charged $32"
+  details?: string
+}
+
+export interface CardCredit {
+  creditType: string    // e.g. "travel", "dining", "streaming", "hotel"
+  amount: number        // CAD
+  details?: string
 }
 
 export interface Insurance {
@@ -65,8 +87,11 @@ export interface CreditCard {
   bonusSummary?: string                // Short marketing copy
   perks: Perk[]
   insurance: Insurance
-  foreignTransactionFee: boolean       // true = has FX fee (~2.5%)
-  loungeAccess?: string                // e.g. "Visa Infinite Privilege"
+  foreignTransactionFee: boolean       // true = has FX fee
+  foreignTransactionFeeRate?: number   // actual rate, e.g. 2.5
+  loungeAccess?: string                // e.g. "Priority Pass" (first network name)
+  loungeDetails?: LoungeDetail[]       // full lounge access records
+  credits?: CardCredit[]               // annual credits (travel, dining, etc.)
   bestFor: string[]                    // e.g. ["Travel", "Grocery spend"]
   notIdealFor?: string[]
   pros?: string[]
@@ -81,7 +106,7 @@ export interface CreditCard {
   categories: CardCategory[]
   lastUpdated: string                  // ISO date string
   shortDescription?: string            // one-sentence card summary from API
-  transferPartners?: string[]          // e.g. ["Aeroplan", "British Airways"]
+  transferPartners?: TransferPartner[]  // transfer loyalty programs with full details
   creditScoreMin?: string              // e.g. "good", "excellent"
   allOffers?: Array<{                  // all current offers from detail endpoint
     id: string
@@ -99,6 +124,12 @@ export interface CreditCard {
     monthlyPointsValue?: number
     monthlySpendRequirement?: number
     bonusMonths?: number
+    isBetterThanUsual?: boolean
+    estimatedValueLow?: number
+    estimatedValueMid?: number
+    estimatedValueHigh?: number
+    avgPoints12mo?: number          // 12-month avg points for this offer type on this card
+    avgCashback12mo?: number        // 12-month avg cashback for this offer type on this card
   }>
 }
 
@@ -129,6 +160,8 @@ export interface CardOffer {
   estimatedValueLow?: number    // (bonus × cpp_low) + annual_credits − annual_fee
   estimatedValueMid?: number    // (bonus × cpp_mid) + annual_credits − annual_fee
   estimatedValueHigh?: number   // (bonus × cpp_high) + annual_credits − annual_fee
+  avgPoints12mo?: number        // 12-month average for this card+offer_type
+  avgCashback12mo?: number
 }
 
 // ─── Blog / Articles ──────────────────────────────────────────────────────────

@@ -11,7 +11,8 @@ const NAV_LINKS = [
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const jar = await cookies()
-  const hasSession = jar.get('admin_session')?.value === process.env.ADMIN_PASSWORD
+  const hasSession = !!process.env.ADMIN_PASSWORD &&
+    jar.get('admin_session')?.value === process.env.ADMIN_PASSWORD
 
   // Login page — no chrome
   if (!hasSession) {
