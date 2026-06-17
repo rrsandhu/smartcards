@@ -251,15 +251,16 @@ export function adaptCard(api: ApiCard): CreditCard {
     : undefined
 
   // transfer_partners: may come as array of objects or legacy string array
+  const cleanStr = (s: string | null | undefined) => (s && s.trim() !== '—' && s.trim() !== '-' ? s : undefined)
   const transferPartners: TransferPartner[] | undefined = api.transfer_partners
     ? api.transfer_partners.map((p: any) => {
         if (typeof p === 'string') return { name: p }
         return {
           name:         p.partner_name ?? String(p),
-          ratio:        p.ratio        ?? undefined,
-          transferTime: p.transfer_time ?? undefined,
-          alliance:     p.alliance     ?? undefined,
-          bestFor:      p.best_for     ?? undefined,
+          ratio:        cleanStr(p.ratio),
+          transferTime: cleanStr(p.transfer_time),
+          alliance:     cleanStr(p.alliance),
+          bestFor:      cleanStr(p.best_for),
         }
       })
     : undefined
@@ -286,7 +287,9 @@ export function adaptCard(api: ApiCard): CreditCard {
     for (const row of api.insurance) {
       const field = COVERAGE_MAP[row.coverage_type.toLowerCase().replace(/\s+/g, '_')]
       if (field) {
-        const detail = row.details ?? row.maximum ?? undefined
+        const PLACEHOLDERS = new Set(['—', '-', 'not included', 'n/a', ''])
+        const rawDetail = row.details ?? row.maximum ?? undefined
+        const detail = rawDetail && !PLACEHOLDERS.has(rawDetail.toLowerCase().trim()) ? rawDetail : undefined
         insurance[field] = detail ?? true
       }
     }
@@ -432,7 +435,7 @@ export async function fetchCards(params?: {
     if (params?.limit)        qs.set('limit', String(params.limit))
     if (params?.page)         qs.set('page', String(params.page))
 
-    const res = await fetch(`${API}/api/cards?${qs}`, { next: { revalidate: 3600 } })
+    const res = await fetch(`${API}/api/cards?${qs}`, { next: { revalidate: 300 } })
     if (!res.ok) return []
     const { cards } = await res.json()
     return (cards as ApiCard[]).map(adaptCard)
@@ -443,7 +446,7 @@ export async function fetchCards(params?: {
 
 export async function fetchCard(slug: string): Promise<CreditCard | null> {
   try {
-    const res = await fetch(`${API}/api/cards/${slug}`, { next: { revalidate: 3600 } })
+    const res = await fetch(`${API}/api/cards/${slug}`, { next: { revalidate: 300 } })
     if (!res.ok) return null
     const { card } = await res.json()
     return adaptCard(card as ApiCard)
@@ -463,7 +466,7 @@ export async function fetchOffers(params?: {
     qs.set('limit', String(params?.limit ?? 50))
     if (params?.page) qs.set('page', String(params.page))
 
-    const res = await fetch(`${API}/api/offers?${qs}`, { next: { revalidate: 60 } })
+    const res = await fetch(`${API}/api/offers?${qs}`, { next: { revalidate: 300 } })
     if (!res.ok) return []
     const data = await res.json()
 

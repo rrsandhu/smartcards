@@ -3,7 +3,23 @@ import { CheckCircle, Star, ExternalLink } from 'lucide-react'
 import Badge from '@/components/ui/Badge'
 import CardImage from '@/components/cards/CardImage'
 import { cn, formatAnnualFee } from '@/lib/utils'
-import type { CreditCard } from '@/types'
+import type { CreditCard, EarnRate } from '@/types'
+
+// Broad everyday categories — preferred over niche ones when picking a display rate
+const BROAD_CATS = new Set([
+  'groceries', 'grocery', 'dining', 'dining & restaurants', 'gas', 'gas & fuel',
+  'travel', 'transit', 'transit & commuting', 'streaming', 'streaming services',
+  'entertainment', 'drugstore', 'drugstore & pharmacy',
+  'everything else', 'all purchases', 'base',
+])
+
+function bestDisplayRate(rates: EarnRate[]): EarnRate | null {
+  if (!rates.length) return null
+  const isBroad = (r: EarnRate) => BROAD_CATS.has(r.category.toLowerCase())
+  const broadRates = rates.filter(isBroad)
+  const pool = broadRates.length > 0 ? broadRates : rates
+  return pool.reduce((a, b) => b.rate > a.rate ? b : a)
+}
 
 interface Props {
   card: CreditCard
@@ -44,8 +60,8 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
               <span className="font-semibold text-gray-900">{formatAnnualFee(card.annualFee)}</span>
             </span>
             {(() => {
-              if (!card.earnRates.length) return null
-              const best = card.earnRates.reduce((a, b) => b.rate > a.rate ? b : a)
+              const best = bestDisplayRate(card.earnRates)
+              if (!best) return null
               const isPoints = best.unit !== 'percent'
               if (isPoints && best.rate <= 1) return null
               const rateStr = isPoints ? `${best.rate}x` : `${best.rate}%`
@@ -125,9 +141,7 @@ export default function CreditCardCard({ card, variant = 'grid' }: Props) {
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-wide mb-0.5">Best Earn</p>
             {(() => {
-              const best = card.earnRates.length
-                ? card.earnRates.reduce((a, b) => b.rate > a.rate ? b : a)
-                : null
+              const best = bestDisplayRate(card.earnRates)
               if (!best || (best.unit !== 'percent' && best.rate <= 1)) {
                 return <p className="font-semibold text-sm text-gray-400">—</p>
               }
