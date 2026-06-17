@@ -22,7 +22,7 @@ export const revalidate = 300
 
 export default async function BestOffersPage() {
   // Fetch live offers from Smart Card Offers API, fall back to local data
-  const apiOffers  = await fetchOffers({ limit: 50 })
+  const apiOffers  = await fetchOffers({ limit: 100 })
   const allOffers  = apiOffers.length > 0 ? apiOffers : localOffers
 
   // Sort limited-time offers: ones with expiry first (soonest expiring), then no-expiry
